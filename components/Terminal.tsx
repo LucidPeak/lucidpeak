@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type HistoryEntry =
   | { kind: "submission"; email: string }
@@ -15,6 +15,8 @@ const ERR_INVALID_SR = "Not a valid email address.";
 const ERR_NETWORK_SR = "Couldn't reach the server. Try again.";
 const SUCCESS_SR = "Subscribed. See you soon.";
 
+const STORAGE_KEY_HISTORY = "lp:terminal:history";
+
 function isValidEmail(value: string) {
   const trimmed = value.trim();
   if (trimmed.length === 0 || trimmed.length > 254) return false;
@@ -25,12 +27,33 @@ function isValidEmail(value: string) {
 export function Terminal() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = window.sessionStorage.getItem(STORAGE_KEY_HISTORY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed as HistoryEntry[];
+      return [];
+    } catch {
+      return [];
+    }
+  });
   const [focused, setFocused] = useState(false);
   const [lastAnnouncement, setLastAnnouncement] = useState("");
+  const [announceTick, setAnnounceTick] = useState(0);
   const [shaking, setShaking] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+    } catch {
+      // storage might be unavailable (Safari private, quota, etc.) — fail silent
+    }
+  }, [history]);
 
   const focusInput = (e?: React.MouseEvent) => {
     if (e && (e.target as HTMLElement).closest("input, button, a")) return;
@@ -44,6 +67,7 @@ export function Terminal() {
       { kind: "error", message: visual },
     ]);
     setLastAnnouncement(sr);
+    setAnnounceTick((n) => n + 1);
     setStatus("error");
     setShaking(true);
     setTimeout(() => setShaking(false), 220);
@@ -87,6 +111,7 @@ export function Terminal() {
         { kind: "success" },
       ]);
       setLastAnnouncement(SUCCESS_SR);
+      setAnnounceTick((n) => n + 1);
       setEmail("");
       setStatus("idle");
       window.dispatchEvent(new CustomEvent("lp:terminal-success"));
@@ -114,12 +139,12 @@ export function Terminal() {
         <div className="term-line term-dim">type and press return</div>
         <div className="term-line">&nbsp;</div>
 
-        <div aria-hidden="true">
-          <div className="term-line">
-            <span className="term-prompt">$ </span>
-            subscribe <span className="term-flag">--email</span> luna@hello.com
-          </div>
-          <div className="term-line term-success">✓ subscribed. see you soon.</div>
+        <div className="term-line" aria-hidden="true">
+          <span className="term-prompt">$ </span>
+          subscribe <span className="term-flag">--email</span> luna@hello.com
+        </div>
+        <div className="term-line term-success" aria-hidden="true">
+          ✓ subscribed. see you soon.
         </div>
 
         <div className="term-line">&nbsp;</div>
@@ -167,6 +192,9 @@ export function Terminal() {
               required
               value={email}
               onChange={onChange}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") inputRef.current?.blur();
+              }}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               disabled={status === "submitting"}
@@ -189,7 +217,9 @@ export function Terminal() {
         </form>
 
         <div role="status" aria-live="polite" className="sr-only">
-          {lastAnnouncement}
+          {lastAnnouncement
+            ? lastAnnouncement + (announceTick % 2 === 1 ? "​" : "")
+            : ""}
         </div>
       </div>
     </div>
