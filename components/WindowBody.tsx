@@ -1,5 +1,6 @@
 import type { App } from "@/content/apps";
 import { AppMark } from "./AppMark";
+import { Terminal } from "./Terminal";
 import { LettermatchCard } from "./cards/LettermatchCard";
 import { IssueAggregatorCard } from "./cards/IssueAggregatorCard";
 import { HiRelayCard } from "./cards/HiRelayCard";
@@ -16,6 +17,10 @@ function CardVisual({ slug }: { slug: string }) {
 }
 
 export function WindowBody({ app }: Props) {
+  if (app.slug === "terminal") {
+    return <Terminal />;
+  }
+
   const live = !app.comingSoon && !!app.href;
   const badge = app.comingSoon
     ? "Coming soon"
