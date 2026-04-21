@@ -1,3 +1,11 @@
+import type { FC } from "react";
+import { LettermatchIcon } from "@/components/app-icons/LettermatchIcon";
+import { IssueAggregatorIcon } from "@/components/app-icons/IssueAggregatorIcon";
+import { HiRelayIcon } from "@/components/app-icons/HiRelayIcon";
+import { BuildMeThisIcon } from "@/components/app-icons/BuildMeThisIcon";
+
+export type AppIcon = FC<{ size: number }>;
+
 export type App = {
   slug: string;
   name: string;
@@ -7,6 +15,7 @@ export type App = {
   comingSoon: boolean;
   accent: string;
   mark: string;
+  Icon?: AppIcon;
   width?: number;
   height?: number;
 };
@@ -21,6 +30,7 @@ export const apps: App[] = [
     comingSoon: false,
     accent: "#e5a853",
     mark: "L",
+    Icon: LettermatchIcon,
   },
   {
     slug: "issueaggregator",
@@ -30,6 +40,7 @@ export const apps: App[] = [
     comingSoon: true,
     accent: "#7c8ef0",
     mark: "I",
+    Icon: IssueAggregatorIcon,
   },
   {
     slug: "hirelay",
@@ -38,6 +49,7 @@ export const apps: App[] = [
     comingSoon: true,
     accent: "#5ed4b3",
     mark: "R",
+    Icon: HiRelayIcon,
   },
   {
     slug: "buildmethis",
@@ -47,6 +59,7 @@ export const apps: App[] = [
     comingSoon: true,
     accent: "#ef6f8c",
     mark: "B",
+    Icon: BuildMeThisIcon,
   },
   {
     slug: "terminal",
