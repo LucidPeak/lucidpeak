@@ -28,6 +28,7 @@ export function Terminal() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [focused, setFocused] = useState(false);
   const [lastAnnouncement, setLastAnnouncement] = useState("");
+  const [shaking, setShaking] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,6 +45,8 @@ export function Terminal() {
     ]);
     setLastAnnouncement(sr);
     setStatus("error");
+    setShaking(true);
+    setTimeout(() => setShaking(false), 220);
     // Pre-select the invalid value so the user can retype immediately.
     requestAnimationFrame(() => {
       if (inputRef.current) {
@@ -100,91 +103,93 @@ export function Terminal() {
   return (
     <div
       ref={surfaceRef}
-      className="term-surface"
+      className={`term-surface ${shaking ? "term-shake" : ""}`}
       onClick={focusInput}
       role="region"
       aria-label="Subscribe to updates"
     >
-      <div className="term-line term-dim">lucidpeak — studio terminal</div>
-      <div className="term-line term-dim">type and press return</div>
-      <div className="term-line">&nbsp;</div>
+      <div className="term-stage">
+        <div className="term-line term-dim">lucidpeak — studio terminal</div>
+        <div className="term-line term-dim">type and press return</div>
+        <div className="term-line">&nbsp;</div>
 
-      <div aria-hidden="true">
-        <div className="term-line">
-          <span className="term-prompt">$ </span>
-          subscribe <span className="term-flag">--email</span> luna@hello.com
-        </div>
-        <div className="term-line term-success">✓ subscribed. see you soon.</div>
-      </div>
-
-      <div className="term-line">&nbsp;</div>
-
-      {history.map((entry, i) => {
-        if (entry.kind === "submission") {
-          return (
-            <div className="term-line" key={`h-${i}`}>
-              <span className="term-prompt">$ </span>
-              subscribe <span className="term-flag">--email</span> {entry.email}
-            </div>
-          );
-        }
-        if (entry.kind === "success") {
-          return (
-            <div className="term-line term-success" key={`h-${i}`}>
-              ✓ subscribed. see you soon.
-            </div>
-          );
-        }
-        return (
-          <div className="term-line term-err" key={`h-${i}`}>
-            {entry.message}
+        <div aria-hidden="true">
+          <div className="term-line">
+            <span className="term-prompt">$ </span>
+            subscribe <span className="term-flag">--email</span> luna@hello.com
           </div>
-        );
-      })}
-
-      {status === "submitting" && (
-        <div className="term-line term-dim">…</div>
-      )}
-
-      <form onSubmit={onSubmit} aria-label="Subscribe to updates">
-        <label htmlFor="sub-email" className="sr-only">
-          Email address
-        </label>
-        <div className={`term-prompt-line ${focused ? "focused" : ""}`}>
-          <span className="term-prompt" aria-hidden="true">$&nbsp;</span>
-          <span aria-hidden="true">subscribe&nbsp;</span>
-          <span className="term-flag" aria-hidden="true">--email&nbsp;</span>
-          <input
-            ref={inputRef}
-            id="sub-email"
-            className="term-input"
-            type="email"
-            required
-            value={email}
-            onChange={onChange}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            disabled={status === "submitting"}
-            autoComplete="email"
-            inputMode="email"
-            spellCheck={false}
-            aria-describedby="sub-hint"
-          />
-          <span
-            className={`term-caret ${status === "submitting" ? "solid" : ""}`}
-            aria-hidden="true"
-          />
+          <div className="term-line term-success">✓ subscribed. see you soon.</div>
         </div>
-        <span id="sub-hint" className="sr-only">
-          Press Return to subscribe.
-        </span>
-        <button type="submit" className="sr-only">
-          Subscribe
-        </button>
-      </form>
 
-      <div role="status" aria-live="polite" className="sr-only">
-        {lastAnnouncement}
+        <div className="term-line">&nbsp;</div>
+
+        {history.map((entry, i) => {
+          if (entry.kind === "submission") {
+            return (
+              <div className="term-line term-history-enter" key={`h-${i}`}>
+                <span className="term-prompt">$ </span>
+                subscribe <span className="term-flag">--email</span> {entry.email}
+              </div>
+            );
+          }
+          if (entry.kind === "success") {
+            return (
+              <div className="term-line term-success term-history-enter" key={`h-${i}`}>
+                ✓ subscribed. see you soon.
+              </div>
+            );
+          }
+          return (
+            <div className="term-line term-err term-history-enter" key={`h-${i}`}>
+              {entry.message}
+            </div>
+          );
+        })}
+
+        {status === "submitting" && (
+          <div className="term-line term-dim term-submitting-dots">…</div>
+        )}
+
+        <form onSubmit={onSubmit} aria-label="Subscribe to updates">
+          <label htmlFor="sub-email" className="sr-only">
+            Email address
+          </label>
+          <div className={`term-prompt-line ${focused ? "focused" : ""}`}>
+            <span className="term-prompt" aria-hidden="true">$&nbsp;</span>
+            <span aria-hidden="true">subscribe&nbsp;</span>
+            <span className="term-flag" aria-hidden="true">--email&nbsp;</span>
+            <input
+              ref={inputRef}
+              id="sub-email"
+              className="term-input"
+              type="email"
+              required
+              value={email}
+              onChange={onChange}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              disabled={status === "submitting"}
+              autoComplete="email"
+              inputMode="email"
+              spellCheck={false}
+              aria-describedby="sub-hint"
+            />
+            <span
+              className={`term-caret ${status === "submitting" ? "solid" : ""}`}
+              aria-hidden="true"
+            />
+          </div>
+          <span id="sub-hint" className="sr-only">
+            Press Return to subscribe.
+          </span>
+          <button type="submit" className="sr-only">
+            Subscribe
+          </button>
+        </form>
+
+        <div role="status" aria-live="polite" className="sr-only">
+          {lastAnnouncement}
+        </div>
       </div>
     </div>
   );
