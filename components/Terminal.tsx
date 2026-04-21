@@ -135,18 +135,7 @@ export function Terminal() {
       aria-label="Subscribe to updates"
     >
       <div className="term-stage">
-        <div className="term-line term-dim">lucidpeak — studio terminal</div>
-        <div className="term-line term-dim">type and press return</div>
-        <div className="term-line">&nbsp;</div>
-
-        <div className="term-line" aria-hidden="true">
-          <span className="term-prompt">$ </span>
-          subscribe <span className="term-flag">--email</span> luna@hello.com
-        </div>
-        <div className="term-line term-success" aria-hidden="true">
-          ✓ subscribed. see you soon.
-        </div>
-
+        <div className="term-line term-dim">type your email and press return</div>
         <div className="term-line">&nbsp;</div>
 
         {history.map((entry, i) => {
@@ -181,9 +170,9 @@ export function Terminal() {
             Email address
           </label>
           <div className={`term-prompt-line ${focused ? "focused" : ""}`}>
-            <span className="term-prompt" aria-hidden="true">$&nbsp;</span>
-            <span aria-hidden="true">subscribe&nbsp;</span>
-            <span className="term-flag" aria-hidden="true">--email&nbsp;</span>
+            <span className="term-prompt" aria-hidden="true">$ </span>
+            <span aria-hidden="true">subscribe </span>
+            <span className="term-flag" aria-hidden="true">--email </span>
             <input
               ref={inputRef}
               id="sub-email"

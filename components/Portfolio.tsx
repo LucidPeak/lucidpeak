@@ -50,15 +50,15 @@ export function Portfolio() {
     setWindows((prev) =>
       prev.map((w) => {
         if (w.slug === "terminal") {
-          const app = initialApps.find((a) => a.slug === "terminal");
-          const tw = app?.width ?? WIN_W;
-          const tx = Math.max(PAD, rect.width - tw - 24);
-          const ty = 28;
-          return { ...w, x: tx, y: ty, z: 0 };
+          return { ...w, x: 24, y: 28, z: 0 };
         }
+        // Project windows live on the right half so the pinned terminal
+        // on the left stays unobstructed on first paint.
+        const rightMinX = Math.max(PAD, Math.floor(rect.width / 2));
+        const rightMaxX = Math.max(rightMinX, maxX);
         return {
           ...w,
-          x: rand(PAD, maxX),
+          x: rand(rightMinX, rightMaxX),
           y: rand(PAD, maxY),
         };
       }),

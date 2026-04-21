@@ -50,11 +50,11 @@ export const apps: App[] = [
   },
   {
     slug: "terminal",
-    name: "Terminal",
+    name: "Terminal – Signup",
     comingSoon: false,
     accent: "#1c1b19",
     mark: "›",
-    width: 320,
-    height: 200,
+    width: 280,
+    height: 380,
   },
 ];
