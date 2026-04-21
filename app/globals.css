@@ -1034,3 +1034,22 @@ body::before {
     transform: none !important;
   }
 }
+
+/* === Terminal dock breath (fires once when hidden success lands) === */
+.dock-breath {
+  animation: dock-breath 1500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes dock-breath {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 169, 122, 0);
+  }
+  40% {
+    box-shadow: 0 0 0 4px rgba(139, 169, 122, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 169, 122, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock-breath { animation: none; }
+}

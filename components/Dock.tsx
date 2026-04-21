@@ -20,6 +20,7 @@ export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [cursorX, setCursorX] = useState<number | null>(null);
+  const [breath, setBreath] = useState(0);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -37,6 +38,17 @@ export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onDockClick]);
+
+  useEffect(() => {
+    const handler = () => {
+      const term = windows.find((w) => w.slug === "terminal");
+      if (term && (term.minimized || !term.open)) {
+        setBreath((n) => n + 1);
+      }
+    };
+    window.addEventListener("lp:terminal-success", handler);
+    return () => window.removeEventListener("lp:terminal-success", handler);
+  }, [windows]);
 
   const scaleFor = (idx: number) => {
     if (cursorX === null) return 1;
@@ -86,7 +98,10 @@ export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
                 aria-selected={focused}
                 aria-label={`${app.name}${app.comingSoon ? " (coming soon)" : ""}`}
                 onClick={() => onDockClick(app.slug)}
-                className="group relative flex items-center justify-center rounded-[12px] active:scale-95"
+                className={`group relative flex items-center justify-center rounded-[12px] active:scale-95 ${
+                  app.slug === "terminal" && breath > 0 ? "dock-breath" : ""
+                }`}
+                key={app.slug === "terminal" ? `btn-${breath}` : app.slug}
               >
                 {app.slug === "terminal" ? (
                   <TerminalMark
