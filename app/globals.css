@@ -1096,15 +1096,19 @@ body::before {
   will-change: transform;
 }
 .terminal-outside {
-  width: 300px;
-  height: 380px;
+  width: var(--term-w, 300px);
+  height: var(--term-h, 380px);
   position: relative;
   justify-self: start;
   will-change: transform;
+  transform: translate(var(--term-dx, 0px), var(--term-dy, 0px));
 }
 .terminal-outside .win-chrome {
   width: 100% !important;
   height: 100% !important;
+}
+.terminal-outside .soft-card {
+  border-radius: var(--term-r, 22px) !important;
 }
 
 /* Narrow viewports: single column, both centered */
