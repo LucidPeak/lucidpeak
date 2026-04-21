@@ -13,6 +13,7 @@ export type App = {
   tagline?: string;
   href?: string;
   comingSoon: boolean;
+  comingSoonLabel?: string;
   accent: string;
   mark: string;
   Icon?: AppIcon;
@@ -38,6 +39,7 @@ export const apps: App[] = [
     pitch: "A unified board of open-source issues and bounties across GitHub.",
     href: "https://github.com/teodor-i/IssueAggregator",
     comingSoon: true,
+    comingSoonLabel: "IssueAggregator · launching Q3",
     accent: "#7c8ef0",
     mark: "I",
     Icon: IssueAggregatorIcon,
@@ -47,6 +49,7 @@ export const apps: App[] = [
     name: "hiRelay",
     pitch: "Content OS for solo creators — one idea, five platform-native outputs, your voice.",
     comingSoon: true,
+    comingSoonLabel: "hiRelay · launching Q3",
     accent: "#5ed4b3",
     mark: "R",
     Icon: HiRelayIcon,
@@ -57,6 +60,7 @@ export const apps: App[] = [
     pitch: "A community board where people post problems and builders ship solutions.",
     tagline: "Wishes meet builders.",
     comingSoon: true,
+    comingSoonLabel: "BuildMeThis · launching Q4",
     accent: "#ef6f8c",
     mark: "B",
     Icon: BuildMeThisIcon,
