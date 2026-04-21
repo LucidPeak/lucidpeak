@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { apps as initialApps } from "@/content/apps";
 import { Window } from "./Window";
 import { Dock } from "./Dock";
-import { LeftRail } from "./LeftRail";
+import { useStickyDrag } from "@/hooks/useStickyDrag";
 
 type WindowState = {
   slug: string;
@@ -20,16 +20,12 @@ type WindowState = {
 const WIN_W = 270;
 const WIN_H = 240;
 
-const TERMINAL_X = 76;
-const TERMINAL_Y = 28;
-
-const LETTERMATCH_RIGHT_MARGIN = 40;
-const LETTERMATCH_Y = 40;
-
-const DRAG_MIN_X = 76;
-
 export function Portfolio() {
   const desktopRef = useRef<HTMLDivElement | null>(null);
+  const screenWrapRef = useRef<HTMLDivElement | null>(null);
+  const menubarRef = useRef<HTMLDivElement | null>(null);
+
+  useStickyDrag(screenWrapRef, menubarRef);
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -40,15 +36,19 @@ export function Portfolio() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  const comingSoonApps = useMemo(
-    () => initialApps.filter((a) => a.comingSoon),
+  const insideMacApps = useMemo(
+    () => initialApps.filter((a) => a.slug !== "terminal"),
+    [],
+  );
+  const terminalApp = useMemo(
+    () => initialApps.find((a) => a.slug === "terminal")!,
     [],
   );
 
   const [windows, setWindows] = useState<WindowState[]>(() =>
     initialApps.map((a, i) => ({
       slug: a.slug,
-      open: !a.comingSoon,
+      open: true,
       minimized: false,
       maximized: false,
       x: 0,
@@ -58,7 +58,6 @@ export function Portfolio() {
   );
   const [focusedSlug, setFocusedSlug] = useState<string>("lettermatch");
   const nextZ = useRef<number>(initialApps.length + 1);
-  const initialPositions = useRef<Record<string, { x: number; y: number }>>({});
   const positioned = useRef(false);
 
   useLayoutEffect(() => {
@@ -66,22 +65,16 @@ export function Portfolio() {
     const desk = desktopRef.current;
     if (!desk) return;
     const rect = desk.getBoundingClientRect();
-
-    const lettermatchX = Math.max(
-      DRAG_MIN_X + TERMINAL_X,
-      rect.width - WIN_W - LETTERMATCH_RIGHT_MARGIN,
-    );
-
-    initialPositions.current = {
-      terminal: { x: TERMINAL_X, y: TERMINAL_Y },
-      lettermatch: { x: lettermatchX, y: LETTERMATCH_Y },
-    };
-
+    const PAD = 16;
+    const DOCK_RESERVE = 72;
+    const maxX = Math.max(PAD, rect.width - WIN_W - PAD);
+    const maxY = Math.max(PAD, rect.height - WIN_H - DOCK_RESERVE);
+    const rand = (min: number, max: number) =>
+      Math.round(min + Math.random() * Math.max(0, max - min));
     setWindows((prev) =>
       prev.map((w) => {
-        const pos = initialPositions.current[w.slug];
-        if (pos) return { ...w, x: pos.x, y: pos.y };
-        return w;
+        if (w.slug === "terminal") return w;
+        return { ...w, x: rand(PAD, maxX), y: rand(PAD, maxY) };
       }),
     );
     positioned.current = true;
@@ -153,11 +146,10 @@ export function Portfolio() {
     const w = windows.find((x) => x.slug === slug);
     if (!w) return;
     if (!w.open) {
-      const pos = initialPositions.current[slug];
       const desk = desktopRef.current;
       const rect = desk?.getBoundingClientRect();
-      const fallbackX = rect ? Math.max(DRAG_MIN_X, rect.width / 2 - WIN_W / 2) : 80;
-      const fallbackY = rect
+      const baseX = rect ? Math.max(20, rect.width / 2 - WIN_W / 2) : 80;
+      const baseY = rect
         ? Math.max(20, Math.min(rect.height / 2 - WIN_H / 2, rect.height - WIN_H - 72))
         : 60;
       setWindows((prev) =>
@@ -168,8 +160,8 @@ export function Portfolio() {
                 open: true,
                 minimized: false,
                 maximized: false,
-                x: pos?.x ?? fallbackX,
-                y: pos?.y ?? fallbackY,
+                x: slug === "terminal" ? x.x : baseX,
+                y: slug === "terminal" ? x.y : baseY,
                 z: nextZ.current++,
               }
             : x,
@@ -210,66 +202,94 @@ export function Portfolio() {
     return () => window.removeEventListener("keydown", handler);
   }, [windows, focusedSlug]);
 
+  const terminalWin = windows.find((x) => x.slug === "terminal")!;
+
   return (
     <section
       aria-label="Projects"
-      className="flex w-full flex-col items-center gap-4 py-4 sm:py-6"
+      className="relative flex w-full flex-col items-center gap-4 py-4 sm:py-6"
     >
-      <div className="mac-screen w-full">
-        <div className="mac-display">
-          <div className="mac-menubar">
-            <span className="mac-menubar-dot" aria-hidden />
-            <span className="mac-menubar-label">lucidpeak</span>
-          </div>
-          <div
-            ref={desktopRef}
-            className={`mac-desktop relative w-full overflow-hidden ${isMobile ? "is-stacked" : ""}`}
-            style={
-              isMobile
-                ? undefined
-                : { height: "min(66vh, 600px)", minHeight: 440 }
-            }
-          >
-            {!isMobile && <LeftRail apps={comingSoonApps} />}
+      <div className="portfolio-row">
+        <div ref={screenWrapRef} className="portfolio-screen-wrap">
+          <div className="mac-screen w-full">
+            <div className="mac-display">
+              <div ref={menubarRef} className="mac-menubar">
+                <span className="mac-menubar-dot" aria-hidden />
+                <span className="mac-menubar-label">lucidpeak</span>
+              </div>
+              <div
+                ref={desktopRef}
+                className={`mac-desktop relative w-full overflow-hidden ${isMobile ? "is-stacked" : ""}`}
+                style={
+                  isMobile
+                    ? undefined
+                    : { height: "min(66vh, 600px)", minHeight: 440 }
+                }
+              >
+                {insideMacApps.map((app) => {
+                  const w = windows.find((x) => x.slug === app.slug)!;
+                  if (!w.open) return null;
+                  return (
+                    <Window
+                      key={app.slug}
+                      app={app}
+                      x={w.x}
+                      y={w.y}
+                      z={w.z}
+                      width={app.width ?? WIN_W}
+                      height={app.height ?? WIN_H}
+                      focused={focusedSlug === app.slug}
+                      minimized={w.minimized}
+                      maximized={w.maximized}
+                      stacked={isMobile}
+                      dimmed={app.comingSoon}
+                      desktopRef={desktopRef}
+                      onFocus={() => focus(app.slug)}
+                      onMove={(x, y) => move(app.slug, x, y)}
+                      onClose={() => close(app.slug)}
+                      onMinimize={() => minimize(app.slug)}
+                      onMaximizeToggle={() => maximizeToggle(app.slug)}
+                    />
+                  );
+                })}
 
-            {initialApps.map((app) => {
-              const w = windows.find((x) => x.slug === app.slug)!;
-              if (!w.open) return null;
-              return (
-                <Window
-                  key={app.slug}
-                  app={app}
-                  x={w.x}
-                  y={w.y}
-                  z={w.z}
-                  width={app.width ?? WIN_W}
-                  height={app.height ?? WIN_H}
-                  focused={focusedSlug === app.slug}
-                  minimized={w.minimized}
-                  maximized={w.maximized}
-                  stacked={isMobile}
-                  desktopRef={desktopRef}
-                  onFocus={() => focus(app.slug)}
-                  onMove={(x, y) => move(app.slug, x, y)}
-                  onClose={() => close(app.slug)}
-                  onMinimize={() => minimize(app.slug)}
-                  onMaximizeToggle={() => maximizeToggle(app.slug)}
-                />
-              );
-            })}
-
-            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[9999] flex justify-center">
-              <div className="pointer-events-auto">
-                <Dock
-                  apps={initialApps}
-                  windows={windows}
-                  focusedSlug={focusedSlug}
-                  onDockClick={openOrFocus}
-                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[9999] flex justify-center">
+                  <div className="pointer-events-auto">
+                    <Dock
+                      apps={initialApps}
+                      windows={windows}
+                      focusedSlug={focusedSlug}
+                      onDockClick={openOrFocus}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {terminalWin.open && (
+          <div className="terminal-outside">
+            <Window
+              app={terminalApp}
+              x={0}
+              y={0}
+              z={1}
+              width={terminalApp.width ?? WIN_W}
+              height={terminalApp.height ?? WIN_H}
+              focused={focusedSlug === "terminal"}
+              minimized={terminalWin.minimized}
+              maximized={false}
+              sticky
+              desktopRef={desktopRef}
+              onFocus={() => focus("terminal")}
+              onMove={() => {}}
+              onClose={() => close("terminal")}
+              onMinimize={() => minimize("terminal")}
+              onMaximizeToggle={() => {}}
+            />
+          </div>
+        )}
       </div>
     </section>
   );

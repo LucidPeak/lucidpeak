@@ -22,6 +22,8 @@ type Props = {
   onMaximizeToggle: () => void;
   desktopRef: React.RefObject<HTMLDivElement | null>;
   stacked?: boolean;
+  sticky?: boolean;
+  dimmed?: boolean;
 };
 
 export function Window({
@@ -41,12 +43,49 @@ export function Window({
   onMaximizeToggle,
   desktopRef,
   stacked = false,
+  sticky = false,
+  dimmed = false,
 }: Props) {
   const dragState = useRef<{ dx: number; dy: number } | null>(null);
+  const winRef = useRef<HTMLDivElement | null>(null);
   const isLive = !app.comingSoon && !!app.href;
 
   const handleTitlePointerDown = (e: React.PointerEvent) => {
     if (stacked) return;
+    if (sticky) {
+      const el = winRef.current;
+      if (!el) return;
+      const target = e.currentTarget as HTMLDivElement;
+      target.setPointerCapture(e.pointerId);
+      const startX = e.clientX;
+      const startY = e.clientY;
+      el.style.transition = "none";
+      const clamp = (v: number) => Math.max(-60, Math.min(60, v * 0.25));
+      const onMoveStick = (ev: PointerEvent) => {
+        el.style.transform = `translate(${clamp(ev.clientX - startX)}px, ${clamp(ev.clientY - startY)}px)`;
+      };
+      const onUpStick = () => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          el.style.transition = "none";
+          el.style.transform = "";
+        } else {
+          el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
+          el.style.transform = "";
+          const clear = () => {
+            el.style.transition = "";
+            el.removeEventListener("transitionend", clear);
+          };
+          el.addEventListener("transitionend", clear);
+        }
+        target.removeEventListener("pointermove", onMoveStick);
+        target.removeEventListener("pointerup", onUpStick);
+        target.removeEventListener("pointercancel", onUpStick);
+      };
+      target.addEventListener("pointermove", onMoveStick);
+      target.addEventListener("pointerup", onUpStick);
+      target.addEventListener("pointercancel", onUpStick);
+      return;
+    }
     if (maximized) return;
     onFocus();
     const target = e.currentTarget as HTMLDivElement;
@@ -80,35 +119,46 @@ export function Window({
     target.addEventListener("pointercancel", onUp);
   };
 
-  const style: React.CSSProperties = stacked
-    ? {}
-    : maximized
-      ? {
-          left: 0,
-          top: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: z,
-          transition: "all 220ms cubic-bezier(0.22,1,0.36,1)",
-        }
-      : {
-          left: x,
-          top: y,
-          width,
-          height,
-          zIndex: z,
-          transform: minimized
-            ? "translateY(60px) scale(0.7)"
-            : "translateY(0) scale(1)",
-          opacity: minimized ? 0 : 1,
-          pointerEvents: minimized ? "none" : "auto",
-          transition:
-            "transform 260ms cubic-bezier(0.22,1,0.36,1), opacity 220ms ease",
-        };
+  const style: React.CSSProperties =
+    stacked || sticky
+      ? sticky
+        ? {
+            opacity: minimized ? 0 : 1,
+            pointerEvents: minimized ? "none" : "auto",
+            transition: "opacity 220ms ease",
+          }
+        : {}
+      : maximized
+        ? {
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: z,
+            transition: "all 220ms cubic-bezier(0.22,1,0.36,1)",
+          }
+        : {
+            left: x,
+            top: y,
+            width,
+            height,
+            zIndex: z,
+            transform: minimized
+              ? "translateY(60px) scale(0.7)"
+              : "translateY(0) scale(1)",
+            opacity: minimized ? 0 : 1,
+            pointerEvents: minimized ? "none" : "auto",
+            transition:
+              "transform 260ms cubic-bezier(0.22,1,0.36,1), opacity 220ms ease",
+          };
+
+  const posClass = stacked || sticky ? "" : "absolute";
+  const dimClass = dimmed ? "is-dimmed" : "";
 
   return (
     <div
-      className="win-chrome absolute"
+      ref={winRef}
+      className={`win-chrome ${posClass} ${dimClass}`.trim()}
       style={style}
       onPointerDown={onFocus}
       role="dialog"
