@@ -69,7 +69,7 @@ export function TerminalShapeControls() {
     <div
       style={{
         position: "fixed",
-        right: 16,
+        left: 16,
         bottom: 16,
         zIndex: 99999,
         fontFamily:
