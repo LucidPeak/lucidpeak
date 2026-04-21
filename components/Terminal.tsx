@@ -39,7 +39,6 @@ export function Terminal() {
       return [];
     }
   });
-  const [focused, setFocused] = useState(false);
   const [lastAnnouncement, setLastAnnouncement] = useState("");
   const [announceTick, setAnnounceTick] = useState(0);
   const [shaking, setShaking] = useState(false);
@@ -169,7 +168,7 @@ export function Terminal() {
           <label htmlFor="sub-email" className="sr-only">
             Email address
           </label>
-          <div className={`term-prompt-line ${focused ? "focused" : ""}`}>
+          <div className="term-prompt-line">
             <span className="term-prompt" aria-hidden="true">$ </span>
             <span aria-hidden="true">subscribe </span>
             <span className="term-flag" aria-hidden="true">--email </span>
@@ -185,8 +184,6 @@ export function Terminal() {
               onKeyDown={(e) => {
                 if (e.key === "Escape") inputRef.current?.blur();
               }}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
               disabled={status === "submitting"}
               autoComplete="email"
               inputMode="email"
