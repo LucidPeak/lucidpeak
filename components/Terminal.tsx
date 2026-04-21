@@ -16,7 +16,10 @@ export function Terminal() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
-  const focusInput = () => inputRef.current?.focus();
+  const focusInput = (e?: React.MouseEvent) => {
+    if (e && (e.target as HTMLElement).closest("input, button, a")) return;
+    inputRef.current?.focus();
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
