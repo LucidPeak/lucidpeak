@@ -1073,46 +1073,30 @@ body::before {
   color: #a7a196;
 }
 
-/* === Portfolio row — lets Terminal sit beside mac-screen on wide viewports === */
-.portfolio-row {
-  position: relative;
-  width: min(100vw, 1360px);
-  margin-left: calc(-1 * (min(100vw, 1360px) - 100%) / 2);
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  padding: 0 20px;
-}
-.portfolio-screen-wrap {
-  flex: 1 1 auto;
-  min-width: 0;
-  will-change: transform;
-}
+/* === Terminal floats to the right of viewport on wide screens === */
 .terminal-outside {
-  flex: 0 0 300px;
-  min-width: 0;
-  position: relative;
+  position: fixed;
+  right: 28px;
+  top: 140px;
+  width: 300px;
+  height: 380px;
+  z-index: 30;
   will-change: transform;
 }
 .terminal-outside .win-chrome {
   width: 100% !important;
-  height: 380px !important;
+  height: 100% !important;
 }
 
-/* Narrow viewports: Terminal stacks below */
-@media (max-width: 1099px) {
-  .portfolio-row {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    margin-left: 0;
-    padding: 0;
-    gap: 16px;
-  }
+/* Narrow viewports: Terminal falls back into document flow below mac-screen */
+@media (max-width: 1279px) {
   .terminal-outside {
-    flex: 0 0 auto;
+    position: relative;
+    right: auto;
+    top: auto;
     width: min(100%, 320px);
-    margin: 0 auto;
+    margin: 16px auto 0;
+    z-index: auto;
   }
 }
 
