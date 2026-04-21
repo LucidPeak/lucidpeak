@@ -80,13 +80,6 @@ export function Window({
         requestAnimationFrame(() => {
           el.style.transform = "translate(0px, 0px)";
         });
-        const clear = (te: TransitionEvent) => {
-          if (te.propertyName !== "transform") return;
-          el.style.transition = "";
-          el.style.transform = "";
-          el.removeEventListener("transitionend", clear);
-        };
-        el.addEventListener("transitionend", clear);
       };
       window.addEventListener("pointermove", onMoveStick);
       window.addEventListener("pointerup", onUpStick);

@@ -43,18 +43,23 @@ export function useStickyDrag(
       requestAnimationFrame(() => {
         el.style.transform = "translate(0px, 0px)";
       });
-      const clear = (te: TransitionEvent) => {
-        if (te.propertyName !== "transform") return;
-        el.style.transition = "";
-        el.style.transform = "";
-        el.removeEventListener("transitionend", clear);
-      };
-      el.addEventListener("transitionend", clear);
+    };
+
+    const onBlur = () => {
+      if (!active) return;
+      active = false;
+      activePointerId = null;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      el.style.transition = "transform 200ms ease";
+      el.style.transform = "translate(0px, 0px)";
     };
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       if (active) return;
+      e.preventDefault();
       active = true;
       activePointerId = e.pointerId;
       startX = e.clientX;
@@ -67,11 +72,15 @@ export function useStickyDrag(
     };
 
     handle.addEventListener("pointerdown", onDown);
+    window.addEventListener("blur", onBlur);
+    document.addEventListener("visibilitychange", onBlur);
     return () => {
       handle.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("blur", onBlur);
+      document.removeEventListener("visibilitychange", onBlur);
     };
   }, [elementRef, handleRef]);
 }
