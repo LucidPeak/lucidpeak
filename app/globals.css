@@ -1086,7 +1086,7 @@ body::before {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
 }
 .portfolio-screen-wrap {
   min-width: 0;
@@ -1097,15 +1097,14 @@ body::before {
 }
 .terminal-outside {
   width: 300px;
+  height: 380px;
   position: relative;
   justify-self: start;
-  align-self: stretch;
   will-change: transform;
 }
 .terminal-outside .win-chrome {
   width: 100% !important;
   height: 100% !important;
-  min-height: 380px;
 }
 
 /* Narrow viewports: single column, both centered */
