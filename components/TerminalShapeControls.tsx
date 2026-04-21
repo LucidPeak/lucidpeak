@@ -33,12 +33,18 @@ function readStored(): Shape {
 }
 
 function applyShape(s: Shape) {
-  const root = document.documentElement;
-  root.style.setProperty("--term-w", `${s.width}px`);
-  root.style.setProperty("--term-h", `${s.height}px`);
-  root.style.setProperty("--term-r", `${s.radius}px`);
-  root.style.setProperty("--term-dx", `${s.offsetX}px`);
-  root.style.setProperty("--term-dy", `${s.offsetY}px`);
+  const el = document.querySelector<HTMLElement>(".terminal-outside");
+  if (el) {
+    el.style.setProperty("width", `${s.width}px`, "important");
+    el.style.setProperty("height", `${s.height}px`, "important");
+    el.style.transform = `translate(${s.offsetX}px, ${s.offsetY}px)`;
+  }
+  const card = document.querySelector<HTMLElement>(
+    ".terminal-outside .soft-card",
+  );
+  if (card) {
+    card.style.borderRadius = `${s.radius}px`;
+  }
 }
 
 export function TerminalShapeControls() {
