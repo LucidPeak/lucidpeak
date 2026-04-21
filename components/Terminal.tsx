@@ -190,6 +190,7 @@ export function Terminal() {
               className="term-input"
               type="email"
               required
+              placeholder="you@hello.com"
               value={email}
               onChange={onChange}
               onKeyDown={(e) => {
@@ -202,10 +203,6 @@ export function Terminal() {
               inputMode="email"
               spellCheck={false}
               aria-describedby="sub-hint"
-            />
-            <span
-              className={`term-caret ${status === "submitting" ? "solid" : ""}`}
-              aria-hidden="true"
             />
           </div>
           <span id="sub-hint" className="sr-only">

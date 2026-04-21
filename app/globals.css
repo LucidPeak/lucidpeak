@@ -923,7 +923,8 @@ body::before {
   line-height: 1.55;
   padding: 12px;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 .term-dim     { color: #a7a196; }
 .term-prompt  { color: #8ba97a; }
@@ -938,13 +939,18 @@ body::before {
   border: none;
   outline: none;
   color: #e9e5d8;
+  caret-color: #e9e5d8;
   font: inherit;
-  caret-color: transparent; /* custom caret block renders separately */
   padding: 0;
   margin: 0;
   width: 100%;
   min-width: 0;
   flex: 1 1 auto;
+}
+
+.term-input::placeholder {
+  color: #6b655d;
+  opacity: 1;
 }
 
 .term-prompt-line {
@@ -1050,4 +1056,20 @@ body::before {
 }
 @media (prefers-reduced-motion: reduce) {
   .dock-breath { animation: none; }
+}
+
+/* === Terminal window dark chrome (applied via :has() on win-chrome) === */
+.win-chrome:has(.term-surface) .soft-card {
+  background: #1c1b19;
+}
+.win-chrome:has(.term-surface) .win-titlebar {
+  background: linear-gradient(
+    to bottom,
+    rgba(40, 39, 37, 0.98),
+    rgba(28, 27, 25, 1)
+  );
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+}
+.win-chrome:has(.term-surface) .win-titlebar span {
+  color: #a7a196;
 }
