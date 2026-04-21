@@ -1096,15 +1096,19 @@ body::before {
   will-change: transform;
 }
 .terminal-outside {
-  width: 300px;
-  height: 380px;
+  width: 380px;
+  height: 245px;
   position: relative;
   justify-self: start;
+  transform: translate(-68px, 4px);
   will-change: transform;
 }
 .terminal-outside .win-chrome {
   width: 100% !important;
   height: 100% !important;
+}
+.terminal-outside .soft-card {
+  border-radius: 28px !important;
 }
 
 /* Narrow viewports: single column, both centered */
@@ -1119,7 +1123,9 @@ body::before {
   }
   .terminal-outside {
     width: min(100%, 320px);
+    height: 380px;
     justify-self: center;
+    transform: none;
   }
 }
 
