@@ -4,15 +4,30 @@ import { useRef, useState } from "react";
 
 type HistoryEntry =
   | { kind: "submission"; email: string }
-  | { kind: "success" };
+  | { kind: "success" }
+  | { kind: "error"; message: string };
 
 type Status = "idle" | "typing" | "submitting" | "success" | "error";
+
+const ERR_INVALID_VISUAL = "err: not a valid email";
+const ERR_NETWORK_VISUAL = "err: couldn't reach the server — try again?";
+const ERR_INVALID_SR = "Not a valid email address.";
+const ERR_NETWORK_SR = "Couldn't reach the server. Try again.";
+const SUCCESS_SR = "Subscribed. See you soon.";
+
+function isValidEmail(value: string) {
+  const trimmed = value.trim();
+  if (trimmed.length === 0 || trimmed.length > 254) return false;
+  if (!trimmed.includes("@")) return false;
+  return true;
+}
 
 export function Terminal() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [focused, setFocused] = useState(false);
+  const [lastAnnouncement, setLastAnnouncement] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
@@ -21,37 +36,65 @@ export function Terminal() {
     inputRef.current?.focus();
   };
 
+  const appendErrorHistory = (visual: string, sr: string, submitted: string) => {
+    setHistory((prev) => [
+      ...prev,
+      { kind: "submission", email: submitted },
+      { kind: "error", message: visual },
+    ]);
+    setLastAnnouncement(sr);
+    setStatus("error");
+    // Pre-select the invalid value so the user can retype immediately.
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const value = email.trim();
-    if (!value.includes("@") || value.length === 0 || value.length > 254) {
-      // Error branch handled in Task 7 — for now, no-op.
+    if (!isValidEmail(value)) {
+      appendErrorHistory(ERR_INVALID_VISUAL, ERR_INVALID_SR, value);
       return;
     }
     setStatus("submitting");
     try {
       const endpoint = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT;
       if (endpoint) {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: value }),
-        });
-        if (!res.ok) throw new Error("request failed");
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10_000);
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: value }),
+            signal: controller.signal,
+          });
+          if (!res.ok) throw new Error("request failed");
+        } finally {
+          clearTimeout(timeoutId);
+        }
       }
       setHistory((prev) => [
         ...prev,
         { kind: "submission", email: value },
         { kind: "success" },
       ]);
-      setStatus("success");
+      setLastAnnouncement(SUCCESS_SR);
       setEmail("");
-      // Return to idle so the new prompt is live.
       setStatus("idle");
     } catch {
-      // Error branch handled in Task 7 — no-op for now.
-      setStatus("idle");
+      appendErrorHistory(ERR_NETWORK_VISUAL, ERR_NETWORK_SR, value);
     }
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (status === "error" || status === "success") setStatus("typing");
+    else if (status === "idle") setStatus("typing");
   };
 
   return (
@@ -76,18 +119,28 @@ export function Terminal() {
 
       <div className="term-line">&nbsp;</div>
 
-      {history.map((entry, i) =>
-        entry.kind === "submission" ? (
-          <div className="term-line" key={`h-${i}`}>
-            <span className="term-prompt">$ </span>
-            subscribe <span className="term-flag">--email</span> {entry.email}
+      {history.map((entry, i) => {
+        if (entry.kind === "submission") {
+          return (
+            <div className="term-line" key={`h-${i}`}>
+              <span className="term-prompt">$ </span>
+              subscribe <span className="term-flag">--email</span> {entry.email}
+            </div>
+          );
+        }
+        if (entry.kind === "success") {
+          return (
+            <div className="term-line term-success" key={`h-${i}`}>
+              ✓ subscribed. see you soon.
+            </div>
+          );
+        }
+        return (
+          <div className="term-line term-err" key={`h-${i}`}>
+            {entry.message}
           </div>
-        ) : (
-          <div className="term-line term-success" key={`h-${i}`}>
-            ✓ subscribed. see you soon.
-          </div>
-        ),
-      )}
+        );
+      })}
 
       {status === "submitting" && (
         <div className="term-line term-dim">…</div>
@@ -108,10 +161,7 @@ export function Terminal() {
             type="email"
             required
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (status !== "submitting") setStatus("typing");
-            }}
+            onChange={onChange}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             disabled={status === "submitting"}
@@ -134,7 +184,7 @@ export function Terminal() {
       </form>
 
       <div role="status" aria-live="polite" className="sr-only">
-        {status === "success" ? "Subscribed. See you soon." : ""}
+        {lastAnnouncement}
       </div>
     </div>
   );
