@@ -914,16 +914,14 @@ body::before {
 
 /* === Terminal app === */
 .term-surface {
-  position: absolute;
-  inset: 0;
+  min-height: 100%;
+  width: 100%;
   background: #1c1b19;
   color: #e9e5d8;
   font-family: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono", monospace;
   font-size: 12.5px;
   line-height: 1.55;
   padding: 12px;
-  overflow-y: auto;
-  overflow-x: hidden;
   white-space: pre-wrap;
   word-break: break-all;
 }
