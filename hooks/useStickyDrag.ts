@@ -14,11 +14,43 @@ export function useStickyDrag(
     let startX = 0;
     let startY = 0;
     let active = false;
+    let activePointerId: number | null = null;
     const RESIST = 0.25;
     const CAP = 60;
     const clamp = (v: number) => Math.max(-CAP, Math.min(CAP, v * RESIST));
 
-    let activePointerId: number | null = null;
+    const onMove = (e: PointerEvent) => {
+      if (!active || e.pointerId !== activePointerId) return;
+      const dx = clamp(e.clientX - startX);
+      const dy = clamp(e.clientY - startY);
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+    };
+
+    const onUp = (e: PointerEvent) => {
+      if (!active || e.pointerId !== activePointerId) return;
+      active = false;
+      activePointerId = null;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        el.style.transition = "";
+        el.style.transform = "";
+        return;
+      }
+      el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
+      requestAnimationFrame(() => {
+        el.style.transform = "translate(0px, 0px)";
+      });
+      const clear = (te: TransitionEvent) => {
+        if (te.propertyName !== "transform") return;
+        el.style.transition = "";
+        el.style.transform = "";
+        el.removeEventListener("transitionend", clear);
+      };
+      el.addEventListener("transitionend", clear);
+    };
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
@@ -29,48 +61,17 @@ export function useStickyDrag(
       startY = e.clientY;
       el.style.transition = "none";
       el.style.transform = "translate(0px, 0px)";
-      handle.setPointerCapture?.(e.pointerId);
-    };
-    const onMove = (e: PointerEvent) => {
-      if (!active || e.pointerId !== activePointerId) return;
-      const dx = clamp(e.clientX - startX);
-      const dy = clamp(e.clientY - startY);
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-    };
-    const onUp = (e: PointerEvent) => {
-      if (!active || e.pointerId !== activePointerId) return;
-      active = false;
-      activePointerId = null;
-      try {
-        handle.releasePointerCapture?.(e.pointerId);
-      } catch {}
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        el.style.transition = "";
-        el.style.transform = "";
-        return;
-      }
-      el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
-      requestAnimationFrame(() => {
-        el.style.transform = "translate(0px, 0px)";
-      });
-      const clear = (ev: TransitionEvent) => {
-        if (ev.propertyName !== "transform") return;
-        el.style.transition = "";
-        el.style.transform = "";
-        el.removeEventListener("transitionend", clear);
-      };
-      el.addEventListener("transitionend", clear);
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
     };
 
     handle.addEventListener("pointerdown", onDown);
-    handle.addEventListener("pointermove", onMove);
-    handle.addEventListener("pointerup", onUp);
-    handle.addEventListener("pointercancel", onUp);
     return () => {
       handle.removeEventListener("pointerdown", onDown);
-      handle.removeEventListener("pointermove", onMove);
-      handle.removeEventListener("pointerup", onUp);
-      handle.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
     };
   }, [elementRef, handleRef]);
 }

@@ -56,9 +56,7 @@ export function Window({
       const el = winRef.current;
       if (!el) return;
       e.preventDefault();
-      const target = e.currentTarget as HTMLDivElement;
       const pointerId = e.pointerId;
-      target.setPointerCapture(pointerId);
       const startX = e.clientX;
       const startY = e.clientY;
       el.style.transition = "none";
@@ -70,12 +68,9 @@ export function Window({
       };
       const onUpStick = (ev: PointerEvent) => {
         if (ev.pointerId !== pointerId) return;
-        target.removeEventListener("pointermove", onMoveStick);
-        target.removeEventListener("pointerup", onUpStick);
-        target.removeEventListener("pointercancel", onUpStick);
-        try {
-          target.releasePointerCapture(pointerId);
-        } catch {}
+        window.removeEventListener("pointermove", onMoveStick);
+        window.removeEventListener("pointerup", onUpStick);
+        window.removeEventListener("pointercancel", onUpStick);
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           el.style.transition = "";
           el.style.transform = "";
@@ -93,9 +88,9 @@ export function Window({
         };
         el.addEventListener("transitionend", clear);
       };
-      target.addEventListener("pointermove", onMoveStick);
-      target.addEventListener("pointerup", onUpStick);
-      target.addEventListener("pointercancel", onUpStick);
+      window.addEventListener("pointermove", onMoveStick);
+      window.addEventListener("pointerup", onUpStick);
+      window.addEventListener("pointercancel", onUpStick);
       return;
     }
     if (maximized) return;
