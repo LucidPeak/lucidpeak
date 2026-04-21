@@ -207,86 +207,88 @@ export function Portfolio() {
   return (
     <section
       aria-label="Projects"
-      className="relative flex w-full flex-col items-center gap-4 py-4 sm:py-6"
+      className="relative flex w-full flex-col items-center gap-4 px-5 py-4 sm:px-8 sm:py-6"
     >
-      <div ref={screenWrapRef} className="mac-screen w-full">
-        <div className="mac-display">
-          <div ref={menubarRef} className="mac-menubar">
-            <span className="mac-menubar-dot" aria-hidden />
-            <span className="mac-menubar-label">lucidpeak</span>
-          </div>
-          <div
-            ref={desktopRef}
-            className={`mac-desktop relative w-full overflow-hidden ${isMobile ? "is-stacked" : ""}`}
-            style={
-              isMobile
-                ? undefined
-                : { height: "min(66vh, 600px)", minHeight: 440 }
-            }
-          >
-            {insideMacApps.map((app) => {
-              const w = windows.find((x) => x.slug === app.slug)!;
-              if (!w.open) return null;
-              return (
-                <Window
-                  key={app.slug}
-                  app={app}
-                  x={w.x}
-                  y={w.y}
-                  z={w.z}
-                  width={app.width ?? WIN_W}
-                  height={app.height ?? WIN_H}
-                  focused={focusedSlug === app.slug}
-                  minimized={w.minimized}
-                  maximized={w.maximized}
-                  stacked={isMobile}
-                  dimmed={app.comingSoon}
-                  desktopRef={desktopRef}
-                  onFocus={() => focus(app.slug)}
-                  onMove={(x, y) => move(app.slug, x, y)}
-                  onClose={() => close(app.slug)}
-                  onMinimize={() => minimize(app.slug)}
-                  onMaximizeToggle={() => maximizeToggle(app.slug)}
-                />
-              );
-            })}
+      <div className="portfolio-row">
+        <div ref={screenWrapRef} className="portfolio-screen-wrap mac-screen">
+          <div className="mac-display">
+            <div ref={menubarRef} className="mac-menubar">
+              <span className="mac-menubar-dot" aria-hidden />
+              <span className="mac-menubar-label">lucidpeak</span>
+            </div>
+            <div
+              ref={desktopRef}
+              className={`mac-desktop relative w-full overflow-hidden ${isMobile ? "is-stacked" : ""}`}
+              style={
+                isMobile
+                  ? undefined
+                  : { height: "min(66vh, 600px)", minHeight: 440 }
+              }
+            >
+              {insideMacApps.map((app) => {
+                const w = windows.find((x) => x.slug === app.slug)!;
+                if (!w.open) return null;
+                return (
+                  <Window
+                    key={app.slug}
+                    app={app}
+                    x={w.x}
+                    y={w.y}
+                    z={w.z}
+                    width={app.width ?? WIN_W}
+                    height={app.height ?? WIN_H}
+                    focused={focusedSlug === app.slug}
+                    minimized={w.minimized}
+                    maximized={w.maximized}
+                    stacked={isMobile}
+                    dimmed={app.comingSoon}
+                    desktopRef={desktopRef}
+                    onFocus={() => focus(app.slug)}
+                    onMove={(x, y) => move(app.slug, x, y)}
+                    onClose={() => close(app.slug)}
+                    onMinimize={() => minimize(app.slug)}
+                    onMaximizeToggle={() => maximizeToggle(app.slug)}
+                  />
+                );
+              })}
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[9999] flex justify-center">
-              <div className="pointer-events-auto">
-                <Dock
-                  apps={initialApps}
-                  windows={windows}
-                  focusedSlug={focusedSlug}
-                  onDockClick={openOrFocus}
-                />
+              <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[9999] flex justify-center">
+                <div className="pointer-events-auto">
+                  <Dock
+                    apps={initialApps}
+                    windows={windows}
+                    focusedSlug={focusedSlug}
+                    onDockClick={openOrFocus}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {terminalWin.open && (
-        <div className="terminal-outside">
-          <Window
-            app={terminalApp}
-            x={0}
-            y={0}
-            z={1}
-            width={terminalApp.width ?? WIN_W}
-            height={terminalApp.height ?? WIN_H}
-            focused={focusedSlug === "terminal"}
-            minimized={terminalWin.minimized}
-            maximized={false}
-            sticky
-            desktopRef={desktopRef}
-            onFocus={() => focus("terminal")}
-            onMove={() => {}}
-            onClose={() => close("terminal")}
-            onMinimize={() => minimize("terminal")}
-            onMaximizeToggle={() => {}}
-          />
-        </div>
-      )}
+        {terminalWin.open && (
+          <div className="terminal-outside">
+            <Window
+              app={terminalApp}
+              x={0}
+              y={0}
+              z={1}
+              width={terminalApp.width ?? WIN_W}
+              height={terminalApp.height ?? WIN_H}
+              focused={focusedSlug === "terminal"}
+              minimized={terminalWin.minimized}
+              maximized={false}
+              sticky
+              desktopRef={desktopRef}
+              onFocus={() => focus("terminal")}
+              onMove={() => {}}
+              onClose={() => close("terminal")}
+              onMinimize={() => minimize("terminal")}
+              onMaximizeToggle={() => {}}
+            />
+          </div>
+        )}
+      </div>
     </section>
   );
 }

@@ -55,31 +55,43 @@ export function Window({
     if (sticky) {
       const el = winRef.current;
       if (!el) return;
+      e.preventDefault();
       const target = e.currentTarget as HTMLDivElement;
-      target.setPointerCapture(e.pointerId);
+      const pointerId = e.pointerId;
+      target.setPointerCapture(pointerId);
       const startX = e.clientX;
       const startY = e.clientY;
       el.style.transition = "none";
+      el.style.transform = "translate(0px, 0px)";
       const clamp = (v: number) => Math.max(-60, Math.min(60, v * 0.25));
       const onMoveStick = (ev: PointerEvent) => {
+        if (ev.pointerId !== pointerId) return;
         el.style.transform = `translate(${clamp(ev.clientX - startX)}px, ${clamp(ev.clientY - startY)}px)`;
       };
-      const onUpStick = () => {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          el.style.transition = "none";
-          el.style.transform = "";
-        } else {
-          el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
-          el.style.transform = "";
-          const clear = () => {
-            el.style.transition = "";
-            el.removeEventListener("transitionend", clear);
-          };
-          el.addEventListener("transitionend", clear);
-        }
+      const onUpStick = (ev: PointerEvent) => {
+        if (ev.pointerId !== pointerId) return;
         target.removeEventListener("pointermove", onMoveStick);
         target.removeEventListener("pointerup", onUpStick);
         target.removeEventListener("pointercancel", onUpStick);
+        try {
+          target.releasePointerCapture(pointerId);
+        } catch {}
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          el.style.transition = "";
+          el.style.transform = "";
+          return;
+        }
+        el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
+        requestAnimationFrame(() => {
+          el.style.transform = "translate(0px, 0px)";
+        });
+        const clear = (te: TransitionEvent) => {
+          if (te.propertyName !== "transform") return;
+          el.style.transition = "";
+          el.style.transform = "";
+          el.removeEventListener("transitionend", clear);
+        };
+        el.addEventListener("transitionend", clear);
       };
       target.addEventListener("pointermove", onMoveStick);
       target.addEventListener("pointerup", onUpStick);
