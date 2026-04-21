@@ -1,0 +1,60 @@
+export type App = {
+  slug: string;
+  name: string;
+  pitch?: string;
+  tagline?: string;
+  href?: string;
+  comingSoon: boolean;
+  accent: string;
+  mark: string;
+  width?: number;
+  height?: number;
+};
+
+export const apps: App[] = [
+  {
+    slug: "lettermatch",
+    name: "Lettermatch",
+    pitch: "Compare Letterboxd and MAL watchlists to find your shared taste.",
+    tagline: "What should we watch? Decide in 30 seconds.",
+    href: "https://lettermatch.app",
+    comingSoon: false,
+    accent: "#e5a853",
+    mark: "L",
+  },
+  {
+    slug: "issueaggregator",
+    name: "IssueAggregator",
+    pitch: "A unified board of open-source issues and bounties across GitHub.",
+    href: "https://github.com/teodor-i/IssueAggregator",
+    comingSoon: true,
+    accent: "#7c8ef0",
+    mark: "I",
+  },
+  {
+    slug: "hirelay",
+    name: "hiRelay",
+    pitch: "Content OS for solo creators — one idea, five platform-native outputs, your voice.",
+    comingSoon: true,
+    accent: "#5ed4b3",
+    mark: "R",
+  },
+  {
+    slug: "buildmethis",
+    name: "BuildMeThis",
+    pitch: "A community board where people post problems and builders ship solutions.",
+    tagline: "Wishes meet builders.",
+    comingSoon: true,
+    accent: "#ef6f8c",
+    mark: "B",
+  },
+  {
+    slug: "terminal",
+    name: "Terminal",
+    comingSoon: false,
+    accent: "#1c1b19",
+    mark: "›",
+    width: 320,
+    height: 200,
+  },
+];
