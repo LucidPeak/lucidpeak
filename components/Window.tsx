@@ -24,6 +24,7 @@ type Props = {
   stacked?: boolean;
   sticky?: boolean;
   dimmed?: boolean;
+  locked?: boolean;
 };
 
 export function Window({
@@ -45,6 +46,7 @@ export function Window({
   stacked = false,
   sticky = false,
   dimmed = false,
+  locked = false,
 }: Props) {
   const dragState = useRef<{ dx: number; dy: number } | null>(null);
   const winRef = useRef<HTMLDivElement | null>(null);
@@ -169,11 +171,12 @@ export function Window({
         <TitleBar
           title={app.name}
           onPointerDown={handleTitlePointerDown}
-          onDoubleClick={onMaximizeToggle}
+          onDoubleClick={locked ? undefined : onMaximizeToggle}
           onClose={onClose}
           onMinimize={onMinimize}
           onMaximize={onMaximizeToggle}
           isLive={isLive}
+          locked={locked}
         />
         <div className="flex-1 overflow-auto">
           <WindowBody app={app} />

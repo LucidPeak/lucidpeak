@@ -27,32 +27,47 @@ function isValidEmail(value: string) {
 export function Terminal() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [history, setHistory] = useState<HistoryEntry[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const raw = window.sessionStorage.getItem(STORAGE_KEY_HISTORY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed as HistoryEntry[];
-      return [];
-    } catch {
-      return [];
-    }
-  });
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const [lastAnnouncement, setLastAnnouncement] = useState("");
   const [announceTick, setAnnounceTick] = useState(0);
   const [shaking, setShaking] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
+  // Hydrate history from sessionStorage after mount — keeps SSR output
+  // deterministic (always empty) so client markup matches and React can
+  // hydrate without mismatch errors.
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem(STORAGE_KEY_HISTORY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setHistory(parsed as HistoryEntry[]);
+      }
+    } catch {
+      // storage might be unavailable — fail silent
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       window.sessionStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
     } catch {
       // storage might be unavailable (Safari private, quota, etc.) — fail silent
     }
-  }, [history]);
+  }, [history, hydrated]);
+
+  // Soft auto-focus on mount — invites the user to start typing immediately.
+  // preventScroll keeps the page from jumping; only fires on initial render.
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      inputRef.current?.focus({ preventScroll: true });
+    }, 700);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const focusInput = (e?: React.MouseEvent) => {
     if (e && (e.target as HTMLElement).closest("input, button, a")) return;
@@ -134,7 +149,7 @@ export function Terminal() {
       aria-label="Subscribe to updates"
     >
       <div className="term-stage">
-        <div className="term-line term-dim">type your email and press return</div>
+        <div className="term-line term-dim term-invite">type your email and press return ↓</div>
         <div className="term-line">&nbsp;</div>
 
         {history.map((entry, i) => {

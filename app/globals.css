@@ -1100,7 +1100,7 @@ body::before {
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 24px;
+  gap: var(--lc-row-gap, 39px);
   align-items: start;
 }
 .portfolio-screen-wrap {
@@ -1120,9 +1120,11 @@ body::before {
   width: 380px;
   height: 245px;
   position: relative;
-  transform: translate(-68px, 4px);
+  transform: translate(var(--lc-terminal-tx, -68px), var(--lc-terminal-ty, 4px));
   will-change: transform;
 }
+/* Baked layout tokens — defaults that hit when the dev LayoutControls panel
+   isn't mounted (prod). Keep in sync with components/LayoutControls.tsx DEFAULTS. */
 .terminal-outside .win-chrome {
   width: 100% !important;
   height: 100% !important;
@@ -1134,9 +1136,9 @@ body::before {
 /* Ship log window — sits below Terminal, same width, matches mac soft-card chrome */
 .shiplog-outside {
   width: 380px;
-  height: 205px;
+  height: var(--lc-shiplog-height, 250px);
   position: relative;
-  transform: translate(-68px, 4px);
+  transform: translate(var(--lc-shiplog-tx, -68px), var(--lc-shiplog-ty, 4px));
   will-change: transform;
 }
 .shiplog-outside .win-chrome {
@@ -1152,11 +1154,12 @@ body::before {
 }
 .shiplog-row {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 7px 0;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
   font-size: 12px;
   border-bottom: 1px solid rgba(17, 17, 20, 0.06);
+  min-height: 30px;
 }
 .shiplog-row:last-child {
   border-bottom: 0;
@@ -1170,6 +1173,114 @@ body::before {
 }
 .shiplog-title {
   color: #3a3629;
+  flex: 1;
+  min-width: 0;
+}
+.shiplog-mark {
+  flex-shrink: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px 3px 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mark-accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mark-accent) 30%, transparent);
+  color: color-mix(in srgb, var(--mark-accent) 80%, #1c1b19 20%);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  opacity: 0.9;
+  line-height: 1;
+}
+.shiplog-mark-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--mark-accent) 90%, white 10%);
+  color: #fff;
+  flex-shrink: 0;
+}
+.shiplog-mark-icon svg {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+.shiplog-mark-name {
+  white-space: nowrap;
+}
+
+/* Tagline row — full-width grid matching portfolio-row so the tagline aligns
+   to the mac-screen's left edge without affecting the row below. */
+.portfolio-tagline-row {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--lc-row-gap, 39px);
+  padding: 0 0 var(--lc-section-gap, 11px);
+}
+.portfolio-tagline-wrap {
+  min-width: 0;
+  width: 100%;
+  max-width: 860px;
+  justify-self: center;
+  padding: 0 4px;
+}
+.studio-tagline {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: pre;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--lc-tagline-size, 21px);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  color: #1c1b19;
+  opacity: var(--lc-tagline-opacity, 0.3);
+  user-select: none;
+}
+.studio-tagline-text {
+  white-space: pre;
+}
+.studio-tagline-caret {
+  display: inline-block;
+  width: clamp(6px, 0.55vw, 8px);
+  height: clamp(13px, 1.3vw, 17px);
+  background: currentColor;
+  margin-left: 3px;
+  transform: translateY(2px);
+  animation: studio-tagline-blink 1s steps(2, end) infinite;
+}
+@keyframes studio-tagline-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-tagline-caret { animation: none; }
+}
+@media (max-width: 1099px) {
+  .portfolio-tagline-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .portfolio-tagline-wrap {
+    max-width: 100%;
+    justify-self: center;
+  }
+}
+
+/* Terminal invite line — gentle pulse to draw the eye to the prompt */
+.term-invite {
+  animation: term-invite-pulse 2.4s ease-in-out infinite;
+}
+@keyframes term-invite-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .term-invite { animation: none; opacity: 0.85; }
 }
 
 /* Narrow viewports: single column, both centered */
@@ -1285,4 +1396,140 @@ body::before {
     z-index: auto !important;
     min-height: 240px;
   }
+}
+
+/* === LayoutControls — dev-only panel === */
+.lc-panel {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 99999;
+  width: 300px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+  background: rgba(28, 27, 25, 0.94);
+  color: #e9e5d8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+}
+.lc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  background: rgba(28, 27, 25, 0.94);
+  backdrop-filter: inherit;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.lc-head:active {
+  cursor: grabbing;
+}
+.lc-grip::before {
+  content: "";
+}
+.lc-title {
+  color: #e5a853;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.lc-actions {
+  display: flex;
+  gap: 6px;
+}
+.lc-actions button,
+.lc-toggle {
+  background: transparent;
+  color: #a7a196;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+.lc-actions button:hover,
+.lc-toggle:hover {
+  color: #e9e5d8;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+}
+.lc-toggle {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 99999;
+  background: rgba(28, 27, 25, 0.92);
+  color: #e5a853;
+  letter-spacing: 0.04em;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+}
+.lc-body {
+  padding: 8px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.lc-group {
+  color: #e5a853;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+.lc-slider {
+  display: grid;
+  grid-template-columns: 80px 1fr 56px;
+  align-items: center;
+  gap: 8px;
+}
+.lc-lbl {
+  color: #a7a196;
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lc-val {
+  color: #e9e5d8;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+}
+.lc-slider input[type="range"] {
+  width: 100%;
+  accent-color: #e5a853;
+  cursor: ew-resize;
+}
+.lc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 0 4px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+.lc-card:last-child {
+  border-bottom: 0;
+}
+.lc-card-lbl {
+  color: #e9e5d8;
+  font-size: 10.5px;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
 }

@@ -4,6 +4,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { apps as initialApps } from "@/content/apps";
 import { Window } from "./Window";
 import { Dock } from "./Dock";
+import { ShipLog } from "./ShipLog";
+import { StudioTagline } from "./StudioTagline";
 import { useStickyDrag } from "@/hooks/useStickyDrag";
 
 type WindowState = {
@@ -58,10 +60,23 @@ export function Portfolio() {
   );
   const [focusedSlug, setFocusedSlug] = useState<string>("lettermatch");
   const nextZ = useRef<number>(initialApps.length + 1);
-  const positioned = useRef(false);
+  const [relayoutKey, setRelayoutKey] = useState(0);
+  // Jitter is rolled once per slug and reused across re-layouts so tuning
+  // fractions in the dev panel doesn't cause visible jumpiness.
+  const jitterCache = useRef<Record<string, { dx: number; dy: number }>>({});
+
+  // Default zone fractions — used on SSR and when no CSS var is set.
+  const ZONE_DEFAULTS: Record<string, { fx: number; fy: number }> = useMemo(
+    () => ({
+      hirelay:         { fx: 0.12, fy: 0.69 },
+      lettermatch:     { fx: 0.95, fy: 0.15 },
+      issueaggregator: { fx: 0.76, fy: 0.57 },
+      buildmethis:     { fx: 0.32, fy: 0.46 },
+    }),
+    [],
+  );
 
   useLayoutEffect(() => {
-    if (positioned.current) return;
     const desk = desktopRef.current;
     if (!desk) return;
     const rect = desk.getBoundingClientRect();
@@ -69,15 +84,49 @@ export function Portfolio() {
     const DOCK_RESERVE = 72;
     const maxX = Math.max(PAD, rect.width - WIN_W - PAD);
     const maxY = Math.max(PAD, rect.height - WIN_H - DOCK_RESERVE);
-    const rand = (min: number, max: number) =>
-      Math.round(min + Math.random() * Math.max(0, max - min));
+
+    const styles = getComputedStyle(document.documentElement);
+    const readFrac = (slug: string, axis: "fx" | "fy", fallback: number) => {
+      const raw = styles.getPropertyValue(`--lc-card-${slug}-${axis}`).trim();
+      const parsed = raw ? parseFloat(raw) : NaN;
+      return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
     setWindows((prev) =>
       prev.map((w) => {
         if (w.slug === "terminal") return w;
-        return { ...w, x: rand(PAD, maxX), y: rand(PAD, maxY) };
+        const fallback = ZONE_DEFAULTS[w.slug];
+        if (!fallback) {
+          return {
+            ...w,
+            x: Math.round(PAD + Math.random() * (maxX - PAD)),
+            y: Math.round(PAD + Math.random() * (maxY - PAD)),
+          };
+        }
+        const fx = readFrac(w.slug, "fx", fallback.fx);
+        const fy = readFrac(w.slug, "fy", fallback.fy);
+        if (!jitterCache.current[w.slug]) {
+          jitterCache.current[w.slug] = {
+            dx: Math.round((Math.random() - 0.5) * 40),
+            dy: Math.round((Math.random() - 0.5) * 30),
+          };
+        }
+        const j = jitterCache.current[w.slug];
+        const targetX = Math.round(PAD + (maxX - PAD) * fx) + j.dx;
+        const targetY = Math.round(PAD + (maxY - PAD) * fy) + j.dy;
+        return {
+          ...w,
+          x: Math.max(PAD, Math.min(maxX, targetX)),
+          y: Math.max(PAD, Math.min(maxY, targetY)),
+        };
       }),
     );
-    positioned.current = true;
+  }, [relayoutKey, ZONE_DEFAULTS]);
+
+  useEffect(() => {
+    const handler = () => setRelayoutKey((k) => k + 1);
+    window.addEventListener("lp:relayout", handler);
+    return () => window.removeEventListener("lp:relayout", handler);
   }, []);
 
   const focus = (slug: string) => {
@@ -207,8 +256,13 @@ export function Portfolio() {
   return (
     <section
       aria-label="Projects"
-      className="relative flex w-full flex-col items-center gap-4 px-5 py-4 sm:px-8 sm:py-6"
+      className="relative flex w-full flex-col items-center gap-3 px-5 pb-4 pt-2 sm:px-8 sm:pb-6 sm:pt-3"
     >
+      <div className="portfolio-tagline-row">
+        <div className="portfolio-tagline-wrap">
+          <StudioTagline />
+        </div>
+      </div>
       <div className="portfolio-row">
         <div ref={screenWrapRef} className="portfolio-screen-wrap mac-screen">
           <div className="mac-display">
@@ -267,25 +321,29 @@ export function Portfolio() {
         </div>
 
         {terminalWin.open && (
-          <div className="terminal-outside">
-            <Window
-              app={terminalApp}
-              x={0}
-              y={0}
-              z={1}
-              width={terminalApp.width ?? WIN_W}
-              height={terminalApp.height ?? WIN_H}
-              focused={focusedSlug === "terminal"}
-              minimized={terminalWin.minimized}
-              maximized={false}
-              sticky
-              desktopRef={desktopRef}
-              onFocus={() => focus("terminal")}
-              onMove={() => {}}
-              onClose={() => close("terminal")}
-              onMinimize={() => minimize("terminal")}
-              onMaximizeToggle={() => {}}
-            />
+          <div className="right-stack">
+            <div className="terminal-outside">
+              <Window
+                app={terminalApp}
+                x={0}
+                y={0}
+                z={1}
+                width={terminalApp.width ?? WIN_W}
+                height={terminalApp.height ?? WIN_H}
+                focused={focusedSlug === "terminal"}
+                minimized={false}
+                maximized={false}
+                sticky
+                locked
+                desktopRef={desktopRef}
+                onFocus={() => focus("terminal")}
+                onMove={() => {}}
+                onClose={() => {}}
+                onMinimize={() => {}}
+                onMaximizeToggle={() => {}}
+              />
+            </div>
+            <ShipLog />
           </div>
         )}
       </div>

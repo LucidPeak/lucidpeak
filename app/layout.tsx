@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CommentOverlay } from "@/components/CommentOverlay";
+import { LayoutControls } from "@/components/LayoutControls";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,7 +56,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-full font-sans">
         {children}
-        {process.env.NODE_ENV === "development" && <CommentOverlay />}
+        {process.env.NODE_ENV === "development" && (
+          <>
+            <CommentOverlay />
+            <LayoutControls />
+          </>
+        )}
       </body>
     </html>
   );
