@@ -1,0 +1,56 @@
+/* Shared theme for dimmed-card sketches — mirrors lucidpeak.co tokens */
+:root {
+  --bg: #eceae4;
+  --fg: #101012;
+  --card: #f6f4ee;
+  --card-dim-current: #d4cdbe;
+  --card-border: rgba(0, 0, 0, 0.05);
+
+  --hazard-yellow: #f4b94f;
+  --hazard-black: #1a1614;
+  --emerald: #10b981;
+  --emerald-ring: rgba(16, 185, 129, 0.22);
+  --emerald-glow: rgba(16, 185, 129, 0.35);
+
+  --traffic-red: #ff5f57;
+  --traffic-yellow: #febc2e;
+  --traffic-green: #28c840;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Menlo", monospace;
+
+  --radius-card: 22px;
+  --shadow-card:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 18px 40px -20px rgba(17, 17, 20, 0.18),
+    0 6px 14px -10px rgba(17, 17, 20, 0.08);
+  --shadow-live:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 0 0 1px var(--emerald-ring),
+    0 0 22px -4px var(--emerald-glow),
+    0 18px 40px -20px rgba(17, 17, 20, 0.18),
+    0 6px 14px -10px rgba(17, 17, 20, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(600px 400px at 12% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+    radial-gradient(700px 500px at 100% 100%, rgba(0, 0, 0, 0.04), transparent 60%);
+}

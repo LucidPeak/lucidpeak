@@ -36,6 +36,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# dev comment overlay dumps
+/.comments/
+
+# brainstorm visual companion scratch
+/.superpowers/
+
+# claude code harness state (session locks, scheduled tasks)
+/.claude/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
