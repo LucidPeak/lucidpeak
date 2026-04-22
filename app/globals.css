@@ -1131,12 +1131,15 @@ body::before {
 
 /* Dimmed coming-soon windows — noticeably darker + hazard-tape + shimmer */
 .win-chrome.is-dimmed {
-  opacity: 0.92;
-  transition: opacity 220ms ease, filter 220ms ease;
+  filter: brightness(0.75) saturate(0.65) contrast(0.92);
+  transition: filter 220ms ease;
+}
+.win-chrome.is-dimmed .soft-card::before,
+.win-chrome.is-dimmed .soft-card::after {
+  /* keep hazard tape + shimmer at their own brightness via isolation */
 }
 .win-chrome.is-dimmed .soft-card {
-  filter: brightness(0.72) saturate(0.7) contrast(0.95);
-  background: #c9c2b2;
+  background: #d4cdbe;
 }
 /* Scrolling hazard tape along the top edge */
 .win-chrome.is-dimmed .soft-card::before {
