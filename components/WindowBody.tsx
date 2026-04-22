@@ -37,6 +37,16 @@ export function WindowBody({ app }: Props) {
         <CardVisual slug={app.slug} />
       </div>
 
+      {app.comingSoon && (
+        <span className="lock-badge" aria-hidden>
+          <svg width="10" height="11" viewBox="0 0 18 20" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <rect x="2" y="9" width="14" height="10" rx="1.5" />
+            <path d="M5 9V6a4 4 0 018 0v3" />
+          </svg>
+          in dev
+        </span>
+      )}
+
       <div className="card-surface absolute inset-[10px] flex flex-col gap-2 p-3">
         <div className="flex items-start justify-between gap-2">
           <AppMark app={app} size={32} />

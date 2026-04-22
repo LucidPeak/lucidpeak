@@ -248,12 +248,27 @@ body::before {
   line-height: 1.55;
   color: rgba(63, 63, 70, 0.9); /* zinc-700 */
   letter-spacing: 0;
+  opacity: 0.4; /* dim code text to 40% */
+}
+.code-typer .code-line,
+.code-typer .code-num,
+.code-typer [class*="code-tok-"] {
+  opacity: 1; /* children inherit via parent opacity multiplier only */
 }
 .code-pre {
   margin: 0;
   padding: 14px 12px 14px 10px;
   white-space: pre;
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+/* Soft fade-out at the top so lines scrolling off feel like they dissolve */
+.code-typer {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 14%, black 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, black 14%, black 100%);
 }
 .code-line {
   display: flex;
@@ -1095,11 +1110,16 @@ body::before {
   justify-self: center;
   will-change: transform;
 }
+.right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-self: start;
+}
 .terminal-outside {
   width: 380px;
   height: 245px;
   position: relative;
-  justify-self: start;
   transform: translate(-68px, 4px);
   will-change: transform;
 }
@@ -1109,6 +1129,47 @@ body::before {
 }
 .terminal-outside .soft-card {
   border-radius: 28px !important;
+}
+
+/* Ship log window — sits below Terminal, same width, matches mac soft-card chrome */
+.shiplog-outside {
+  width: 380px;
+  height: 205px;
+  position: relative;
+  transform: translate(-68px, 4px);
+  will-change: transform;
+}
+.shiplog-outside .win-chrome {
+  width: 100%;
+  height: 100%;
+}
+.shiplog-body {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 4px 16px 10px;
+  overflow: hidden;
+}
+.shiplog-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 7px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(17, 17, 20, 0.06);
+}
+.shiplog-row:last-child {
+  border-bottom: 0;
+}
+.shiplog-date {
+  color: #a39f8f;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  min-width: 44px;
+}
+.shiplog-title {
+  color: #3a3629;
 }
 
 /* Narrow viewports: single column, both centered */
@@ -1121,27 +1182,30 @@ body::before {
   .portfolio-screen-wrap {
     max-width: 100%;
   }
+  .right-stack {
+    justify-self: center;
+    align-items: center;
+  }
   .terminal-outside {
     width: min(100%, 320px);
     height: 380px;
-    justify-self: center;
+    transform: none;
+  }
+  .shiplog-outside {
+    width: min(100%, 320px);
     transform: none;
   }
 }
 
-/* Dimmed coming-soon windows — noticeably darker + hazard-tape + shimmer */
+/* Dimmed coming-soon windows — blueprint paper body + hazard-tape titlebar */
+/* Titlebar + traffic lights + hazard tape stay fully bright (no outer filter) */
 .win-chrome.is-dimmed {
-  filter: brightness(0.75) saturate(0.65) contrast(0.92);
-  transition: filter 220ms ease;
-}
-.win-chrome.is-dimmed .soft-card::before,
-.win-chrome.is-dimmed .soft-card::after {
-  /* keep hazard tape + shimmer at their own brightness via isolation */
+  transition: transform 220ms ease;
 }
 .win-chrome.is-dimmed .soft-card {
-  background: #d4cdbe;
+  background: #f1ede0;
 }
-/* Scrolling hazard tape along the top edge */
+/* Scrolling hazard tape along the top edge of the card body */
 .win-chrome.is-dimmed .soft-card::before {
   content: "";
   position: absolute;
@@ -1163,31 +1227,39 @@ body::before {
   from { background-position: 0 0; }
   to   { background-position: 28.28px 0; }
 }
-/* Soft diagonal shimmer across the body */
-.win-chrome.is-dimmed .soft-card::after {
-  content: "";
+/* Paper + blueprint grid behind the card content */
+.win-chrome.is-dimmed .card-reveal {
+  background:
+    linear-gradient(rgba(26, 22, 20, 0.07) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(26, 22, 20, 0.07) 1px, transparent 1px) 0 0 / 22px 22px,
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.55), transparent 70%),
+    #f1ede0;
+}
+/* Corner lock badge */
+.win-chrome.is-dimmed .lock-badge {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    115deg,
-    transparent 35%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 65%
-  );
-  background-size: 220% 100%;
-  background-position: 100% 0;
-  animation: dimmed-shimmer 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  bottom: 10px;
+  right: 10px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(26, 22, 20, 0.08);
+  color: rgba(26, 22, 20, 0.58);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   pointer-events: none;
-  z-index: 2;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
-@keyframes dimmed-shimmer {
-  0%   { background-position: 150% 0; }
-  60%  { background-position: -50% 0; }
-  100% { background-position: -50% 0; }
-}
+.win-chrome.is-dimmed .lock-badge svg { opacity: 0.7; }
 @media (prefers-reduced-motion: reduce) {
-  .win-chrome.is-dimmed .soft-card::before,
-  .win-chrome.is-dimmed .soft-card::after {
+  .win-chrome.is-dimmed .soft-card::before {
     animation: none;
   }
 }
