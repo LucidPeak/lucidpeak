@@ -1102,12 +1102,16 @@ body::before {
   color: #a7a196;
 }
 
-/* === Portfolio row — mac-screen + terminal side by side on wide viewports === */
+/* === Portfolio row — mac-screen + terminal side by side on wide viewports
+   padding-right compensates for terminal-outside's -68px transform so
+   the combined visual content (mac-screen + shifted terminal) centers
+   horizontally in the viewport, not the raw grid box. === */
 .portfolio-row {
   position: relative;
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
+  padding-right: 52px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: var(--lc-row-gap, 39px);
@@ -1246,7 +1250,7 @@ body::before {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: var(--lc-row-gap, 39px);
-  padding: 0 0 var(--lc-section-gap, 11px);
+  padding: 0 52px var(--lc-section-gap, 11px) 0;
 }
 .portfolio-tagline-wrap {
   min-width: 0;
