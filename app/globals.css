@@ -46,9 +46,9 @@ body::before {
 }
 
 .soft-dock {
-  background: rgba(246, 244, 238, 0.85);
-  backdrop-filter: blur(18px) saturate(1.1);
-  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  background: rgba(246, 244, 238, 0.92);
+  backdrop-filter: blur(8px) saturate(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
@@ -64,17 +64,17 @@ body::before {
     0 6px 14px -10px rgba(17, 17, 20, 0.12);
 }
 
-/* Mac-style desktop frame — outer bezel + inner display */
+/* Mac-style desktop frame — outer bezel + inner display
+   (backdrop-filter removed — expensive on a full-desktop surface and
+   near-invisible against the cream page background) */
 .mac-screen {
   position: relative;
   isolation: isolate;
   border-radius: 22px;
   padding: 10px;
   background:
-    linear-gradient(180deg, rgba(210, 212, 218, 0.55) 0%, rgba(168, 172, 182, 0.55) 100%),
+    linear-gradient(180deg, rgba(210, 212, 218, 0.75) 0%, rgba(168, 172, 182, 0.75) 100%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.06) 100%);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.6) inset,
@@ -456,27 +456,11 @@ body::before {
     0 6px 14px -10px rgba(17, 17, 20, 0.08);
 }
 
-/* Live dot — pulsing beacon in titlebar */
+/* Live dot — static halo; pulse comes from .live-indicator-pulse class */
 .live-dot {
   box-shadow:
     0 0 0 2px rgba(16, 185, 129, 0.18),
     0 0 8px rgba(16, 185, 129, 0.55);
-  animation: live-pulse 1.8s ease-in-out infinite;
-}
-@keyframes live-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px rgba(16, 185, 129, 0.18),
-      0 0 8px rgba(16, 185, 129, 0.55);
-  }
-  50% {
-    box-shadow:
-      0 0 0 4px rgba(16, 185, 129, 0.10),
-      0 0 12px rgba(16, 185, 129, 0.75);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .live-dot { animation: none; }
 }
 
 /* === Lettermatch live preview === */
@@ -1122,7 +1106,7 @@ body::before {
 .portfolio-row {
   position: relative;
   width: 100%;
-  max-width: 1320px;
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
@@ -1134,7 +1118,6 @@ body::before {
   width: 100%;
   max-width: 860px;
   justify-self: center;
-  will-change: transform;
 }
 .right-stack {
   display: flex;
@@ -1147,7 +1130,6 @@ body::before {
   height: 245px;
   position: relative;
   transform: translate(var(--lc-terminal-tx, -68px), var(--lc-terminal-ty, 4px));
-  will-change: transform;
 }
 /* Baked layout tokens — defaults that hit when the dev LayoutControls panel
    isn't mounted (prod). Keep in sync with components/LayoutControls.tsx DEFAULTS. */
@@ -1165,7 +1147,6 @@ body::before {
   height: var(--lc-shiplog-height, 250px);
   position: relative;
   transform: translate(var(--lc-shiplog-tx, -68px), var(--lc-shiplog-ty, 4px));
-  will-change: transform;
 }
 .shiplog-outside .win-chrome {
   width: 100%;
@@ -1260,7 +1241,7 @@ body::before {
    to the mac-screen's left edge without affecting the row below. */
 .portfolio-tagline-row {
   width: 100%;
-  max-width: 1320px;
+  max-width: 1200px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;

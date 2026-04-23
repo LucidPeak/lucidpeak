@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Phase = "idle" | "setup" | "scan" | "collapse" | "resolve";
 
@@ -58,8 +58,22 @@ export function LettermatchLivePreview() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [cycle, setCycle] = useState(0);
   const [typed, setTyped] = useState(0);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { rootMargin: "120px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
     let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
     const wait = (ms: number) =>
@@ -99,10 +113,15 @@ export function LettermatchLivePreview() {
       cancelled = true;
       timers.forEach(clearTimeout);
     };
-  }, []);
+  }, [visible]);
 
   return (
-    <div className="card-visual lm-preview" aria-hidden data-phase={phase}>
+    <div
+      ref={rootRef}
+      className="card-visual lm-preview"
+      aria-hidden
+      data-phase={phase}
+    >
       <div className="lm-top">
         <span className="lm-brand-mark">
           <svg viewBox="0 0 16 16" fill="none" aria-hidden>
