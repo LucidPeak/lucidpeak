@@ -56,7 +56,7 @@ export async function POST(req: Request) {
   try {
     await resend.contacts.create({
       email,
-      audienceId,
+      segments: [{ id: audienceId }],
       unsubscribed: false,
     });
 
