@@ -33,6 +33,7 @@ export function Terminal() {
   const [announceTick, setAnnounceTick] = useState(0);
   const [shaking, setShaking] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const honeypotRef = useRef<HTMLInputElement | null>(null);
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
   // Hydrate history from sessionStorage after mount — keeps SSR output
@@ -103,21 +104,21 @@ export function Terminal() {
     }
     setStatus("submitting");
     try {
-      const endpoint = process.env.NEXT_PUBLIC_NEWSLETTER_ENDPOINT;
-      if (endpoint) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10_000);
-        try {
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: value }),
-            signal: controller.signal,
-          });
-          if (!res.ok) throw new Error("request failed");
-        } finally {
-          clearTimeout(timeoutId);
-        }
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10_000);
+      try {
+        const res = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: value,
+            website: honeypotRef.current?.value ?? "",
+          }),
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("request failed");
+      } finally {
+        clearTimeout(timeoutId);
       }
       setHistory((prev) => [
         ...prev,
@@ -180,6 +181,22 @@ export function Terminal() {
         )}
 
         <form onSubmit={onSubmit} aria-label="Subscribe to updates">
+          <input
+            ref={honeypotRef}
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: "-9999px",
+              width: 1,
+              height: 1,
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+          />
           <label htmlFor="sub-email" className="sr-only">
             Email address
           </label>
