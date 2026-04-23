@@ -1106,7 +1106,7 @@ body::before {
 .portfolio-row {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
@@ -1241,7 +1241,7 @@ body::before {
    to the mac-screen's left edge without affecting the row below. */
 .portfolio-tagline-row {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
