@@ -219,12 +219,30 @@ body::before {
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(246, 244, 238, 0.82);
-  backdrop-filter: blur(10px) saturate(1.1);
-  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  background: #fbf8f2;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   pointer-events: none;
+}
+
+/* Live indicator — softer pulse than Tailwind's animate-pulse */
+.live-indicator-pulse {
+  animation: live-indicator-pulse 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes live-indicator-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-indicator-pulse { animation: none; }
 }
 .card-reveal:hover .card-art-layer {
   opacity: 0.45;
@@ -487,7 +505,7 @@ body::before {
   display: inline-flex;
   width: 13px;
   height: 13px;
-  color: #e5a853;
+  color: #2eba68;
 }
 .lm-brand-mark svg { width: 100%; height: 100%; }
 .lm-brand-name {
@@ -539,7 +557,7 @@ body::before {
   flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 320ms var(--ease);
+  transition: opacity 520ms var(--ease);
 }
 .lm-preview[data-phase="idle"] .lm-idle {
   opacity: 1;
@@ -558,7 +576,7 @@ body::before {
   font-size: 13px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #b5812f;
+  color: #167939;
   line-height: 1.15;
   text-align: center;
 }
@@ -605,7 +623,7 @@ body::before {
   width: 1.5px;
   height: 11px;
   margin-left: 1.5px;
-  background: #b5812f;
+  background: #2eba68;
   animation: code-blink 0.9s steps(2, end) infinite;
 }
 .lm-idle-btn {
@@ -713,12 +731,12 @@ body::before {
 }
 .lm-preview[data-phase="scan"] .lm-stamp[data-shared="true"],
 .lm-preview[data-phase="collapse"] .lm-stamp[data-shared="true"] {
-  background: #fff4de;
-  border-color: #e5a853;
-  color: #7a4f15;
+  background: #d9f2e0;
+  border-color: #2eba68;
+  color: #14542a;
   box-shadow:
-    0 0 0 1px rgba(229, 168, 83, 0.35),
-    0 0 8px rgba(229, 168, 83, 0.4);
+    0 0 0 1px rgba(46, 186, 104, 0.35),
+    0 0 8px rgba(46, 186, 104, 0.4);
   transition-delay: calc(var(--i, 0) * 150ms + 260ms);
 }
 
@@ -752,13 +770,13 @@ body::before {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(229, 168, 83, 0) 8%,
-    rgba(229, 168, 83, 0.85) 50%,
-    rgba(229, 168, 83, 0) 92%,
+    rgba(46, 186, 104, 0) 8%,
+    rgba(46, 186, 104, 0.85) 50%,
+    rgba(46, 186, 104, 0) 92%,
     transparent 100%
   );
   filter: blur(0.3px);
-  box-shadow: 0 0 10px rgba(229, 168, 83, 0.55);
+  box-shadow: 0 0 10px rgba(46, 186, 104, 0.55);
   opacity: 0;
 }
 .lm-preview[data-phase="scan"] .lm-scanline {
@@ -783,7 +801,7 @@ body::before {
   padding-top: 6px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 360ms var(--ease) 100ms;
+  transition: opacity 520ms var(--ease) 120ms;
 }
 .lm-preview[data-phase="resolve"] .lm-resolved {
   opacity: 1;
@@ -799,7 +817,7 @@ body::before {
   display: inline-flex;
   width: 10px;
   height: 10px;
-  color: #e5a853;
+  color: #3fc88e;
 }
 .lm-resolved-heart svg { width: 100%; height: 100%; }
 .lm-resolved-count {
@@ -808,7 +826,7 @@ body::before {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b5812f;
+  color: #167939;
 }
 
 .lm-resolved-cards {
@@ -822,17 +840,9 @@ body::before {
   position: relative;
   width: 56px;
   height: 78px;
-  padding: 13px 6px 6px;
+  padding: 0;
   border-radius: 3px;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(229, 168, 83, 0.04) 0px,
-      rgba(229, 168, 83, 0.04) 1px,
-      transparent 1px,
-      transparent 7px
-    ),
-    #fbf8f2;
+  background: #fbf8f2;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow:
     inset 0 0.5px 0 rgba(255, 255, 255, 0.9),
@@ -842,6 +852,30 @@ body::before {
   opacity: 0;
   transform: translateY(8px);
 }
+.lm-resolved-poster {
+  display: block;
+  width: 100%;
+  height: 54px;
+  object-fit: cover;
+  object-position: center top;
+  user-select: none;
+  pointer-events: none;
+}
+.lm-resolved-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24px;
+  padding: 3px 4px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: #fbf8f2;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
 .lm-preview[data-phase="resolve"] .lm-resolved-card {
   animation: lm-resolve-in 460ms var(--ease) forwards;
   animation-delay: calc(var(--i, 0) * 120ms + 220ms);
@@ -850,23 +884,15 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.lm-resolved-rule {
-  position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 6px;
-  height: 1px;
-  background: rgba(181, 129, 47, 0.35);
-}
 .lm-resolved-title {
   display: block;
+  max-width: 100%;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 9px;
+  font-size: 7px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #3f3f46;
-  padding-top: 14px;
   text-align: center;
   line-height: 1;
   overflow: hidden;
@@ -876,26 +902,26 @@ body::before {
 .lm-resolved-year {
   display: block;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 7.5px;
+  font-size: 6.5px;
   font-weight: 500;
   letter-spacing: 0.08em;
   color: rgba(63, 63, 70, 0.55);
   text-align: center;
-  margin-top: 3px;
 }
 .lm-resolved-stamp {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
+  right: 3px;
+  bottom: 19px;
   width: 17px;
   height: 17px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1.2px solid #e5a853;
-  background: rgba(251, 248, 242, 0.65);
-  color: #b5812f;
+  border: 1.2px solid #3fc88e;
+  background: rgba(251, 248, 242, 0.85);
+  color: #1f8a5a;
   opacity: 0;
   transform: rotate(-12deg) scale(0.4);
 }
@@ -1212,6 +1238,23 @@ body::before {
 .shiplog-mark-name {
   white-space: nowrap;
 }
+.shiplog-mark-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.shiplog-mark-link:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--mark-accent) 26%, transparent);
+  transform: translateY(-1px);
+}
+.shiplog-mark-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--mark-accent) 60%, transparent);
+  outline-offset: 2px;
+}
 
 /* Tagline row — full-width grid matching portfolio-row so the tagline aligns
    to the mac-screen's left edge without affecting the row below. */
@@ -1308,6 +1351,21 @@ body::before {
   }
 }
 
+/* Mobile stack: terminal + ship log span full section width so they match
+   the mac-screen above them. Uses `width: 100%` on the right-stack column
+   + children so they inherit the section's content width (100vw - 2*px-5). */
+@media (max-width: 767px) {
+  .right-stack {
+    width: 100%;
+    align-self: stretch;
+  }
+  .terminal-outside,
+  .shiplog-outside {
+    width: 100% !important;
+    max-width: none;
+  }
+}
+
 /* Dimmed coming-soon windows — blueprint paper body + hazard-tape titlebar */
 /* Titlebar + traffic lights + hazard tape stay fully bright (no outer filter) */
 .win-chrome.is-dimmed {
@@ -1386,15 +1444,20 @@ body::before {
     gap: 14px;
     padding: 14px 14px 80px 14px;
   }
+  /* Explicit height is required for inner `h-full` + `flex-1` to resolve.
+     `height: auto` + `min-height` collapses percentage heights to 0 in CSS,
+     leaving only the title bar visible. */
   .mac-desktop.is-stacked .win-chrome {
     position: relative !important;
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
-    height: auto !important;
+    height: 260px !important;
     transform: none !important;
     z-index: auto !important;
-    min-height: 240px;
+  }
+  .portfolio-tagline-wrap {
+    text-align: center;
   }
 }
 

@@ -28,7 +28,7 @@ export const apps: App[] = [
     tagline: "What should we watch? Decide in 30 seconds.",
     href: "https://lettermatch.app",
     comingSoon: false,
-    accent: "#e5a853",
+    accent: "#2eba68",
     mark: "L",
     Icon: LettermatchIcon,
   },

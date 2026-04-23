@@ -47,56 +47,47 @@ export function WindowBody({ app }: Props) {
         </span>
       )}
 
-      <div className="card-surface absolute inset-[10px] flex flex-col gap-2 p-3">
-        <div className="flex items-start justify-between gap-2">
-          <AppMark app={app} size={32} />
+      <div className="card-surface absolute inset-[10px] flex min-w-0 flex-col gap-1.5 overflow-hidden p-2.5">
+        <div className="flex shrink-0 items-start justify-between gap-2">
+          <AppMark app={app} size={30} />
           <span
             className={
               app.comingSoon
-                ? "inline-flex items-center rounded-full border border-black/10 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-zinc-600"
-                : "inline-flex items-center rounded-full border border-emerald-600/15 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700"
+                ? "inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-zinc-600"
+                : "inline-flex items-center gap-1.5 rounded-full border border-emerald-600/15 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700"
             }
           >
+            {badge}
             <span
               aria-hidden
-              className={`mr-1 inline-block h-1 w-1 rounded-full ${
-                app.comingSoon ? "bg-zinc-400" : "bg-emerald-500 animate-pulse"
+              className={`inline-block h-1.5 w-1.5 rounded-full ${
+                app.comingSoon ? "bg-zinc-400" : "bg-emerald-500 live-indicator-pulse"
               }`}
             />
-            {badge}
           </span>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <h2 className="text-[16px] font-semibold tracking-tight text-zinc-950">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1 overflow-hidden">
+          <h2 className="truncate text-[15px] font-semibold tracking-tight text-zinc-950">
             {app.name}
           </h2>
           {app.tagline && (
-            <p className="text-[12px] font-medium text-zinc-800">{app.tagline}</p>
+            <p className="line-clamp-2 text-[11.5px] font-medium leading-[1.35] text-zinc-800">{app.tagline}</p>
           )}
           {app.pitch && (
-            <p className="text-[11px] leading-[1.45] text-zinc-600">{app.pitch}</p>
+            <p className="line-clamp-2 text-[10.5px] leading-[1.4] text-zinc-600">{app.pitch}</p>
           )}
         </div>
 
-        <div className="mt-auto flex items-center gap-2 pt-1">
+        <div className="flex min-w-0 shrink-0 items-center gap-2 pt-0.5">
           {live ? (
             <a
               href={app.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-7 items-center rounded-full bg-zinc-950 px-3 text-[11px] font-medium text-white transition hover:bg-zinc-800"
+              className="inline-flex h-7 max-w-full items-center truncate rounded-full bg-zinc-950 px-3 text-[11px] font-medium text-white transition hover:bg-zinc-800"
             >
               Visit {app.name} →
-            </a>
-          ) : app.href ? (
-            <a
-              href={app.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-7 items-center rounded-full border border-black/10 bg-white/80 px-3 text-[11px] font-medium text-zinc-800 transition hover:bg-white"
-            >
-              View source →
             </a>
           ) : (
             <span className="inline-flex h-7 items-center rounded-full border border-dashed border-black/15 px-3 text-[10px] font-medium text-zinc-500">

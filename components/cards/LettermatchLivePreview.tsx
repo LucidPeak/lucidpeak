@@ -29,9 +29,9 @@ const FRIEND_LIST: Stamp[] = [
 ];
 
 const SHARED = [
-  { title: "Blade Runner 2049", year: "'17" },
-  { title: "Arrival", year: "'16" },
-  { title: "Her", year: "'13" },
+  { title: "Blade Runner 2049", year: "'17", poster: "/posters/blade-runner-2049.jpg" },
+  { title: "Arrival", year: "'16", poster: "/posters/arrival.jpg" },
+  { title: "Her", year: "'13", poster: "/posters/her.jpg" },
 ];
 
 const CAPTIONS: Record<Phase, string> = {
@@ -125,7 +125,7 @@ export function LettermatchLivePreview() {
         <span className="lm-brand-name">LetterMatch</span>
       </div>
 
-      <div className="lm-story" key={cycle}>
+      <div className="lm-story">
         <div className="lm-idle">
           <div className="lm-idle-hero">
             <h3 className="lm-idle-title">Find Your Next Watch</h3>
@@ -200,9 +200,19 @@ export function LettermatchLivePreview() {
               className="lm-resolved-card"
               style={{ "--i": i } as React.CSSProperties}
             >
-              <span className="lm-resolved-rule" aria-hidden />
-              <span className="lm-resolved-title">{m.title}</span>
-              <span className="lm-resolved-year">{m.year}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="lm-resolved-poster"
+                src={m.poster}
+                alt=""
+                aria-hidden
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="lm-resolved-caption">
+                <span className="lm-resolved-title">{m.title}</span>
+                <span className="lm-resolved-year">{m.year}</span>
+              </span>
               <span className="lm-resolved-stamp" aria-hidden>
                 <svg viewBox="0 0 10 10" fill="none">
                   <path

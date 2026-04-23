@@ -37,7 +37,28 @@ export function ShipLog() {
                 <li key={i} className="shiplog-row">
                   <span className="shiplog-date">{entry.date}</span>
                   <span className="shiplog-title">{entry.title}</span>
-                  {app && (
+                  {app && (app.href ? (
+                    <a
+                      href={app.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shiplog-mark shiplog-mark-link"
+                      style={
+                        {
+                          "--mark-accent": app.accent,
+                        } as React.CSSProperties
+                      }
+                      aria-label={`open ${app.name}`}
+                      title={app.name}
+                    >
+                      {app.Icon && (
+                        <span className="shiplog-mark-icon" aria-hidden>
+                          <app.Icon size={14} />
+                        </span>
+                      )}
+                      <span className="shiplog-mark-name">{app.name}</span>
+                    </a>
+                  ) : (
                     <span
                       className="shiplog-mark"
                       style={
@@ -55,7 +76,7 @@ export function ShipLog() {
                       )}
                       <span className="shiplog-mark-name">{app.name}</span>
                     </span>
-                  )}
+                  ))}
                 </li>
               );
             })}

@@ -107,8 +107,8 @@ export function Portfolio() {
         const fy = readFrac(w.slug, "fy", fallback.fy);
         if (!jitterCache.current[w.slug]) {
           jitterCache.current[w.slug] = {
-            dx: Math.round((Math.random() - 0.5) * 40),
-            dy: Math.round((Math.random() - 0.5) * 30),
+            dx: Math.round((Math.random() - 0.5) * 16),
+            dy: Math.round((Math.random() - 0.5) * 10),
           };
         }
         const j = jitterCache.current[w.slug];
