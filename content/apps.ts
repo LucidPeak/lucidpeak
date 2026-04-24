@@ -23,9 +23,8 @@ export type App = {
 export const apps: App[] = [
   {
     slug: "lettermatch",
-    name: "Lettermatch",
-    pitch: "Compare Letterboxd and MAL watchlists to find your shared taste.",
-    tagline: "What should we watch? Decide in 30 seconds.",
+    name: "LetterMatch",
+    pitch: "Find movies your whole group wants to watch.",
     href: "https://lettermatch.app",
     comingSoon: false,
     accent: "#2eba68",

@@ -987,7 +987,7 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0;
+  gap: 0.55ch;
 }
 .term-prompt-line > span {
   white-space: nowrap;
@@ -1592,3 +1592,4 @@ body::before {
   text-transform: lowercase;
   letter-spacing: 0.02em;
 }
+

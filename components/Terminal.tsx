@@ -201,9 +201,9 @@ export function Terminal() {
             Email address
           </label>
           <div className="term-prompt-line">
-            <span className="term-prompt" aria-hidden="true">$ </span>
-            <span aria-hidden="true">subscribe </span>
-            <span className="term-flag" aria-hidden="true">--email </span>
+            <span className="term-prompt" aria-hidden="true">$</span>
+            <span aria-hidden="true">subscribe</span>
+            <span className="term-flag" aria-hidden="true">--email</span>
             <input
               ref={inputRef}
               id="sub-email"

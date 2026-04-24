@@ -309,7 +309,7 @@ export function Portfolio() {
               <div className="pointer-events-none absolute inset-x-0 bottom-3 z-[9999] flex justify-center">
                 <div className="pointer-events-auto">
                   <Dock
-                    apps={initialApps}
+                    apps={insideMacApps}
                     windows={windows}
                     focusedSlug={focusedSlug}
                     onDockClick={openOrFocus}
