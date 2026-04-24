@@ -53,6 +53,14 @@ export default function RootLayout({
     >
       <head>
         <meta name="color-scheme" content="only light" />
+        {/* Kill Chrome/Safari's lavender/yellow autofill bar on the terminal
+            input. Inline because LightningCSS strips :-webkit-autofill rules
+            from Tailwind v4's compiled output. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `.term-input:-webkit-autofill,.term-input:-webkit-autofill:hover,.term-input:-webkit-autofill:focus,.term-input:-webkit-autofill:active{-webkit-box-shadow:0 0 0 1000px #1c1b19 inset !important;box-shadow:0 0 0 1000px #1c1b19 inset !important;-webkit-text-fill-color:#e9e5d8 !important;caret-color:#e9e5d8 !important;transition:background-color 600000s ease-in-out 0s,color 600000s ease-in-out 0s !important;}`,
+          }}
+        />
         {/* Wide-monitor scale-up. Tailwind v4's LightningCSS strips `zoom` as
             a non-spec property, so we apply it via inline JS on body instead.
             Runs pre-React-hydration to avoid flash of small content. */}

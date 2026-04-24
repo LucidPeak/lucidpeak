@@ -983,6 +983,11 @@ body::before {
   opacity: 1;
 }
 
+/* Autofill override lives in app/layout.tsx via inline <style> — Tailwind
+   v4's LightningCSS strips :-webkit-autofill / -webkit-box-shadow /
+   -webkit-text-fill-color as legacy vendor prefixes, so the rule has to
+   ship raw. */
+
 .term-prompt-line {
   display: flex;
   flex-wrap: wrap;
