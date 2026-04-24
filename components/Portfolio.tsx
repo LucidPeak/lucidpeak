@@ -79,7 +79,9 @@ export function Portfolio() {
   useLayoutEffect(() => {
     const desk = desktopRef.current;
     if (!desk) return;
-    const rect = desk.getBoundingClientRect();
+    // offsetWidth/Height return pre-zoom CSS pixel dimensions, so position
+    // math stays in the same coordinate space as the `left`/`top` we write.
+    const rect = { width: desk.offsetWidth, height: desk.offsetHeight };
     const PAD = 16;
     const DOCK_RESERVE = 72;
     const maxX = Math.max(PAD, rect.width - WIN_W - PAD);
@@ -196,7 +198,9 @@ export function Portfolio() {
     if (!w) return;
     if (!w.open) {
       const desk = desktopRef.current;
-      const rect = desk?.getBoundingClientRect();
+      const rect = desk
+        ? { width: desk.offsetWidth, height: desk.offsetHeight }
+        : null;
       const baseX = rect ? Math.max(20, rect.width / 2 - WIN_W / 2) : 80;
       const baseY = rect
         ? Math.max(20, Math.min(rect.height / 2 - WIN_H / 2, rect.height - WIN_H - 72))

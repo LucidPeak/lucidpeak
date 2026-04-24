@@ -21,8 +21,12 @@ export function useStickyDrag(
 
     const onMove = (e: PointerEvent) => {
       if (!active || e.pointerId !== activePointerId) return;
-      const dx = clamp(e.clientX - startX);
-      const dy = clamp(e.clientY - startY);
+      // clientX/Y are viewport pixels; translate interprets CSS pixels.
+      // Divide by body zoom so the wobble tracks finger 1:1 under zoom.
+      const z = parseFloat(getComputedStyle(document.body).zoom);
+      const zoom = Number.isFinite(z) && z > 0 ? z : 1;
+      const dx = clamp((e.clientX - startX) / zoom);
+      const dy = clamp((e.clientY - startY) / zoom);
       el.style.transform = `translate(${dx}px, ${dy}px)`;
     };
 

@@ -54,6 +54,13 @@ export function Window({
 
   const handleTitlePointerDown = (e: React.PointerEvent) => {
     if (stacked) return;
+    // Pointer events report clientX/Y in viewport pixels while style.left/top
+    // and transform translates are interpreted in CSS pixels. Under `body { zoom }`
+    // those two spaces diverge by the zoom factor — divide to stay consistent.
+    const bodyZoom = (() => {
+      const z = parseFloat(getComputedStyle(document.body).zoom);
+      return Number.isFinite(z) && z > 0 ? z : 1;
+    })();
     if (sticky) {
       const el = winRef.current;
       if (!el) return;
@@ -66,7 +73,9 @@ export function Window({
       const clamp = (v: number) => Math.max(-60, Math.min(60, v * 0.25));
       const onMoveStick = (ev: PointerEvent) => {
         if (ev.pointerId !== pointerId) return;
-        el.style.transform = `translate(${clamp(ev.clientX - startX)}px, ${clamp(ev.clientY - startY)}px)`;
+        const dx = (ev.clientX - startX) / bodyZoom;
+        const dy = (ev.clientY - startY) / bodyZoom;
+        el.style.transform = `translate(${clamp(dx)}px, ${clamp(dy)}px)`;
       };
       const onUpStick = (ev: PointerEvent) => {
         if (ev.pointerId !== pointerId) return;
@@ -92,17 +101,19 @@ export function Window({
     onFocus();
     const target = e.currentTarget as HTMLDivElement;
     target.setPointerCapture(e.pointerId);
-    dragState.current = { dx: e.clientX - x, dy: e.clientY - y };
+    dragState.current = {
+      dx: e.clientX / bodyZoom - x,
+      dy: e.clientY / bodyZoom - y,
+    };
 
     const onMoveHandler = (ev: PointerEvent) => {
       if (!dragState.current) return;
       const desk = desktopRef.current;
-      const bounds = desk?.getBoundingClientRect();
-      let nx = ev.clientX - dragState.current.dx;
-      let ny = ev.clientY - dragState.current.dy;
-      if (bounds) {
-        const maxX = bounds.width - 60;
-        const maxY = bounds.height - 40;
+      let nx = ev.clientX / bodyZoom - dragState.current.dx;
+      let ny = ev.clientY / bodyZoom - dragState.current.dy;
+      if (desk) {
+        const maxX = desk.offsetWidth - 60;
+        const maxY = desk.offsetHeight - 40;
         if (nx < -width + 120) nx = -width + 120;
         if (nx > maxX) nx = maxX;
         if (ny < 0) ny = 0;

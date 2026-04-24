@@ -1593,3 +1593,7 @@ body::before {
   letter-spacing: 0.02em;
 }
 
+/* Wide-monitor scale-up is applied via inline script in app/layout.tsx that
+   sets body.style.zoom at breakpoints. Can't do it here — Tailwind v4's
+   LightningCSS strips `zoom` as a non-spec property, dropping the rules. */
+
