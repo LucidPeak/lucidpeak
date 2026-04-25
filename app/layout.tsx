@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CommentOverlay } from "@/components/CommentOverlay";
 import { LayoutControls } from "@/components/LayoutControls";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,6 +74,8 @@ export default function RootLayout({
       </head>
       <body className="min-h-full font-sans">
         {children}
+        <Analytics />
+        <SpeedInsights />
         {process.env.NODE_ENV === "development" && (
           <>
             <CommentOverlay />
