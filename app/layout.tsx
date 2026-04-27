@@ -63,12 +63,15 @@ export default function RootLayout({
             __html: `.term-input:-webkit-autofill,.term-input:-webkit-autofill:hover,.term-input:-webkit-autofill:focus,.term-input:-webkit-autofill:active{-webkit-box-shadow:0 0 0 1000px #1c1b19 inset !important;box-shadow:0 0 0 1000px #1c1b19 inset !important;-webkit-text-fill-color:#e9e5d8 !important;caret-color:#e9e5d8 !important;transition:background-color 600000s ease-in-out 0s,color 600000s ease-in-out 0s !important;}`,
           }}
         />
-        {/* Wide-monitor scale-up. Tailwind v4's LightningCSS strips `zoom` as
-            a non-spec property, so we apply it via inline JS on body instead.
-            Runs pre-React-hydration to avoid flash of small content. */}
-        <script
+        {/* Wide-monitor scale-up. Inline because Tailwind v4's LightningCSS
+            strips `zoom` as a non-spec property. Each tier's min-height
+            threshold equals 780 * zoom, mirroring the old h/780 cap so a
+            tier only kicks in when there's enough vertical room for it.
+            CSS in <head> applies pre-paint — eliminates the post-load
+            zoom snap that the previous JS version caused (CLS). */}
+        <style
           dangerouslySetInnerHTML={{
-            __html: `(function(){var set=function(){var w=window.innerWidth,h=window.innerHeight,z=1;if(w>=3200)z=2.25;else if(w>=2800)z=2;else if(w>=2400)z=1.75;else if(w>=2000)z=1.5;else if(w>=1700)z=1.3;else if(w>=1440)z=1.15;z=Math.min(z,h/780);z=Math.max(1,z);var b=document.body;if(!b)return;b.style.zoom=z===1?"":String(z);var mh=z===1?"":(100/z)+"vh";b.style.minHeight=mh;var nodes=b.querySelectorAll('[class*="min-h-screen"],[class*="min-h-full"]');for(var i=0;i<nodes.length;i++){nodes[i].style.minHeight=mh;}};if(document.body){set();}else{document.addEventListener("DOMContentLoaded",set);}window.addEventListener("resize",set);})();`,
+            __html: `@media (min-width:1440px) and (min-height:897px){body{zoom:1.15;min-height:86.957vh !important;}.min-h-screen,.min-h-full{min-height:86.957vh !important;}}@media (min-width:1700px) and (min-height:1014px){body{zoom:1.3;min-height:76.923vh !important;}.min-h-screen,.min-h-full{min-height:76.923vh !important;}}@media (min-width:2000px) and (min-height:1170px){body{zoom:1.5;min-height:66.667vh !important;}.min-h-screen,.min-h-full{min-height:66.667vh !important;}}@media (min-width:2400px) and (min-height:1365px){body{zoom:1.75;min-height:57.143vh !important;}.min-h-screen,.min-h-full{min-height:57.143vh !important;}}@media (min-width:2800px) and (min-height:1560px){body{zoom:2;min-height:50vh !important;}.min-h-screen,.min-h-full{min-height:50vh !important;}}@media (min-width:3200px) and (min-height:1755px){body{zoom:2.25;min-height:44.444vh !important;}.min-h-screen,.min-h-full{min-height:44.444vh !important;}}`,
           }}
         />
       </head>
