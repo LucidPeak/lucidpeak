@@ -5,9 +5,9 @@ export type ShipLogEntry = {
 };
 
 export const shipLog: ShipLogEntry[] = [
-  { date: "Apr 21", title: "dimmed cards go darker" },
-  { date: "Apr 18", title: "bake terminal shape" },
-  { date: "Apr 14", title: "signup terminal app", slug: "terminal" },
-  { date: "Apr 08", title: "sticky drag hardened" },
-  { date: "Apr 02", title: "lettermatch v1 live", slug: "lettermatch" },
+  { date: "May ??", title: "secret project" },
+  { date: "May 15", title: "issue aggregator", slug: "issueaggregator" },
+  { date: "May 02", title: "lettermatch public release", slug: "lettermatch" },
+  { date: "Apr 27", title: "lettermatch v1 live", slug: "lettermatch" },
+  { date: "Apr 21", title: "signup terminal", slug: "terminal" },
 ];
