@@ -10,7 +10,7 @@ type HistoryEntry =
 type Status = "idle" | "typing" | "submitting" | "success" | "error";
 
 const ERR_INVALID_VISUAL = "err: not a valid email";
-const ERR_NETWORK_VISUAL = "err: couldn't reach the server — try again?";
+const ERR_NETWORK_VISUAL = "err: couldn't reach the server - try again?";
 const ERR_INVALID_SR = "Not a valid email address.";
 const ERR_NETWORK_SR = "Couldn't reach the server. Try again.";
 const SUCCESS_SR = "Subscribed. See you soon.";

@@ -13,14 +13,14 @@ type Values = {
   terminalTy: number;
   shiplogTx: number;
   shiplogTy: number;
-  cardHirelayFx: number;
-  cardHirelayFy: number;
+  cardSecret1Fx: number;
+  cardSecret1Fy: number;
   cardLettermatchFx: number;
   cardLettermatchFy: number;
   cardIssueaggregatorFx: number;
   cardIssueaggregatorFy: number;
-  cardBuildmethisFx: number;
-  cardBuildmethisFy: number;
+  cardSecret2Fx: number;
+  cardSecret2Fy: number;
 };
 
 const DEFAULTS: Values = {
@@ -34,14 +34,14 @@ const DEFAULTS: Values = {
   terminalTy: 4,
   shiplogTx: -68,
   shiplogTy: 4,
-  cardHirelayFx: 0.12,
-  cardHirelayFy: 0.69,
+  cardSecret1Fx: 0.12,
+  cardSecret1Fy: 0.69,
   cardLettermatchFx: 0.95,
   cardLettermatchFy: 0.15,
   cardIssueaggregatorFx: 0.76,
   cardIssueaggregatorFy: 0.57,
-  cardBuildmethisFx: 0.32,
-  cardBuildmethisFy: 0.46,
+  cardSecret2Fx: 0.32,
+  cardSecret2Fy: 0.46,
 };
 
 const STORAGE_KEY = "lp:layout-controls";
@@ -62,14 +62,14 @@ function toCssVarMap(v: Values): Record<string, string> {
     "--lc-terminal-ty": `${v.terminalTy}px`,
     "--lc-shiplog-tx": `${v.shiplogTx}px`,
     "--lc-shiplog-ty": `${v.shiplogTy}px`,
-    "--lc-card-hirelay-fx": String(v.cardHirelayFx),
-    "--lc-card-hirelay-fy": String(v.cardHirelayFy),
+    "--lc-card-secret1-fx": String(v.cardSecret1Fx),
+    "--lc-card-secret1-fy": String(v.cardSecret1Fy),
     "--lc-card-lettermatch-fx": String(v.cardLettermatchFx),
     "--lc-card-lettermatch-fy": String(v.cardLettermatchFy),
     "--lc-card-issueaggregator-fx": String(v.cardIssueaggregatorFx),
     "--lc-card-issueaggregator-fy": String(v.cardIssueaggregatorFy),
-    "--lc-card-buildmethis-fx": String(v.cardBuildmethisFx),
-    "--lc-card-buildmethis-fy": String(v.cardBuildmethisFy),
+    "--lc-card-secret2-fx": String(v.cardSecret2Fx),
+    "--lc-card-secret2-fy": String(v.cardSecret2Fy),
   };
 }
 
@@ -338,11 +338,11 @@ export function LayoutControls() {
         />
         <div className="lc-group">cards (0 = left/top, 1 = right/bottom)</div>
         <CardSliders
-          label="hiRelay"
-          fx={values.cardHirelayFx}
-          fy={values.cardHirelayFy}
-          onFx={(v) => set("cardHirelayFx", v)}
-          onFy={(v) => set("cardHirelayFy", v)}
+          label="secret #1"
+          fx={values.cardSecret1Fx}
+          fy={values.cardSecret1Fy}
+          onFx={(v) => set("cardSecret1Fx", v)}
+          onFy={(v) => set("cardSecret1Fy", v)}
         />
         <CardSliders
           label="lettermatch"
@@ -359,11 +359,11 @@ export function LayoutControls() {
           onFy={(v) => set("cardIssueaggregatorFy", v)}
         />
         <CardSliders
-          label="buildmethis"
-          fx={values.cardBuildmethisFx}
-          fy={values.cardBuildmethisFy}
-          onFx={(v) => set("cardBuildmethisFx", v)}
-          onFy={(v) => set("cardBuildmethisFy", v)}
+          label="secret #2"
+          fx={values.cardSecret2Fx}
+          fy={values.cardSecret2Fy}
+          onFx={(v) => set("cardSecret2Fx", v)}
+          onFy={(v) => set("cardSecret2Fy", v)}
         />
       </div>
     </div>

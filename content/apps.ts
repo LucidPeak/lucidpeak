@@ -1,8 +1,7 @@
 import type { FC } from "react";
 import { LettermatchIcon } from "@/components/app-icons/LettermatchIcon";
 import { IssueAggregatorIcon } from "@/components/app-icons/IssueAggregatorIcon";
-import { HiRelayIcon } from "@/components/app-icons/HiRelayIcon";
-import { BuildMeThisIcon } from "@/components/app-icons/BuildMeThisIcon";
+import { LockIcon } from "@/components/app-icons/LockIcon";
 
 export type AppIcon = FC<{ size: number }>;
 
@@ -43,23 +42,22 @@ export const apps: App[] = [
     Icon: IssueAggregatorIcon,
   },
   {
-    slug: "hirelay",
-    name: "hiRelay",
-    pitch: "Content OS for solo creators — one idea, five platform-native outputs, your voice.",
+    slug: "secret1",
+    name: "Secret App #1",
+    pitch: "Building in stealth - a tool for founders and creators.",
     comingSoon: true,
-    accent: "#5ed4b3",
-    mark: "R",
-    Icon: HiRelayIcon,
+    accent: "#6b6f76",
+    mark: "?",
+    Icon: LockIcon,
   },
   {
-    slug: "buildmethis",
-    name: "BuildMeThis",
-    pitch: "A community board where people post problems and builders ship solutions.",
-    tagline: "Wishes meet builders.",
+    slug: "secret2",
+    name: "Secret App #2",
+    pitch: "Building in stealth - an app for sharpening something you use every day.",
     comingSoon: true,
-    accent: "#ef6f8c",
-    mark: "B",
-    Icon: BuildMeThisIcon,
+    accent: "#7a726a",
+    mark: "?",
+    Icon: LockIcon,
   },
   {
     slug: "terminal",

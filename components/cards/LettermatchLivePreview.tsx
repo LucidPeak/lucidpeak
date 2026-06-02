@@ -39,7 +39,7 @@ const CAPTIONS: Record<Phase, string> = {
   setup: "you vs. @andrea",
   scan: "comparing 142 films",
   collapse: "finding overlap",
-  resolve: "3 shared — go watch",
+  resolve: "3 shared - go watch",
 };
 
 const FRIEND_HANDLE = "@andrea";

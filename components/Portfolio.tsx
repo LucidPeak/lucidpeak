@@ -68,10 +68,10 @@ export function Portfolio() {
   // Default zone fractions — used on SSR and when no CSS var is set.
   const ZONE_DEFAULTS: Record<string, { fx: number; fy: number }> = useMemo(
     () => ({
-      hirelay:         { fx: 0.12, fy: 0.69 },
+      secret1:         { fx: 0.12, fy: 0.69 },
       lettermatch:     { fx: 0.95, fy: 0.15 },
       issueaggregator: { fx: 0.76, fy: 0.57 },
-      buildmethis:     { fx: 0.32, fy: 0.46 },
+      secret2:         { fx: 0.32, fy: 0.46 },
     }),
     [],
   );

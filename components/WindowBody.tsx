@@ -3,16 +3,14 @@ import { AppMark } from "./AppMark";
 import { Terminal } from "./Terminal";
 import { LettermatchCard } from "./cards/LettermatchCard";
 import { IssueAggregatorCard } from "./cards/IssueAggregatorCard";
-import { HiRelayCard } from "./cards/HiRelayCard";
-import { BuildMeThisCard } from "./cards/BuildMeThisCard";
+import { SecretCard } from "./cards/SecretCard";
 
 type Props = { app: App };
 
 function CardVisual({ slug }: { slug: string }) {
   if (slug === "lettermatch") return <LettermatchCard />;
   if (slug === "issueaggregator") return <IssueAggregatorCard />;
-  if (slug === "hirelay") return <HiRelayCard />;
-  if (slug === "buildmethis") return <BuildMeThisCard />;
+  if (slug === "secret1" || slug === "secret2") return <SecretCard />;
   return null;
 }
 
