@@ -5,7 +5,8 @@ export type ShipLogEntry = {
 };
 
 export const shipLog: ShipLogEntry[] = [
-  { date: "May ??", title: "secret project" },
+  { date: "Jul ??", title: "secret app #1", slug: "secret1" },
+  { date: "Jul ??", title: "secret app #2", slug: "secret2" },
   { date: "May 15", title: "issue aggregator", slug: "issueaggregator" },
   { date: "May 02", title: "lettermatch public release", slug: "lettermatch" },
   { date: "Apr 27", title: "lettermatch v1 live", slug: "lettermatch" },

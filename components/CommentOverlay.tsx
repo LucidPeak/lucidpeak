@@ -551,7 +551,7 @@ export function CommentOverlay() {
           <button
             type="button"
             onClick={() => setTool("pen")}
-            title="Pen (P) — freehand draw"
+            title="Pen (P) - freehand draw"
             style={{
               fontSize: 12,
               padding: "6px 12px",
@@ -567,7 +567,7 @@ export function CommentOverlay() {
           <button
             type="button"
             onClick={() => setTool("box")}
-            title="Box (B) — drag rectangle"
+            title="Box (B) - drag rectangle"
             style={{
               fontSize: 12,
               padding: "6px 12px",
@@ -604,7 +604,7 @@ export function CommentOverlay() {
               <button
                 type="button"
                 onClick={commitPen}
-                title="Done drawing (Enter) — add note"
+                title="Done drawing (Enter) - add note"
                 style={{
                   fontSize: 12,
                   padding: "6px 12px",
