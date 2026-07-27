@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useInViewport } from "@/hooks/useInViewport";
 
 type Phase = "idle" | "feeding" | "settled";
 
@@ -63,18 +64,7 @@ export function IssueAggregatorLivePreview() {
   const [fedCount, setFedCount] = useState(0);
   const [cycle, setCycle] = useState(0);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "120px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const visible = useInViewport(rootRef);
 
   useEffect(() => {
     if (!visible) return;

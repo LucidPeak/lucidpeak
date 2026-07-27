@@ -215,12 +215,12 @@ body::before {
 }
 .card-art-layer {
   opacity: 1;
-  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card-surface {
   opacity: 0;
   transform: translateY(4px);
-  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1), transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
   background: #fbf8f2;
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
@@ -375,7 +375,7 @@ body::before {
   stroke-linecap: round;
   fill: none;
   opacity: 0;
-  transition: opacity 150ms ease;
+  transition: opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .win-titlebar:hover .traffic-lights svg {
   opacity: 1;
@@ -456,13 +456,6 @@ body::before {
     0 0 22px -4px rgba(16, 185, 129, 0.35),
     0 18px 40px -20px rgba(17, 17, 20, 0.18),
     0 6px 14px -10px rgba(17, 17, 20, 0.08);
-}
-
-/* Live dot — static halo; pulse comes from .live-indicator-pulse class */
-.live-dot {
-  box-shadow:
-    0 0 0 2px rgba(16, 185, 129, 0.18),
-    0 0 8px rgba(16, 185, 129, 0.55);
 }
 
 /* === Lettermatch live preview === */
@@ -621,7 +614,7 @@ body::before {
   padding: 0 10px;
   font-size: 10px;
   font-weight: 600;
-  color: #fff;
+  color: #fbf8f2;
   background: #18181b;
   border-radius: 6px;
 }
@@ -766,7 +759,7 @@ body::before {
   opacity: 0;
 }
 .lm-preview[data-phase="scan"] .lm-scanline {
-  animation: lm-scan-sweep 1200ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation: lm-scan-sweep 1200ms var(--ease) forwards;
 }
 @keyframes lm-scan-sweep {
   0%   { top: -4%; opacity: 0; }
@@ -1288,25 +1281,6 @@ body::before {
   }
 }
 
-/* === Terminal dock breath (fires once when hidden success lands) === */
-.dock-breath {
-  animation: dock-breath 1500ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes dock-breath {
-  0% {
-    box-shadow: 0 0 0 0 rgba(139, 169, 122, 0);
-  }
-  40% {
-    box-shadow: 0 0 0 4px rgba(139, 169, 122, 0.35);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(139, 169, 122, 0);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dock-breath { animation: none; }
-}
-
 /* === Terminal window dark chrome (applied via :has() on win-chrome) === */
 .win-chrome:has(.term-surface) .soft-card {
   background: #1c1b19;
@@ -1442,7 +1416,7 @@ body::before {
   height: 16px;
   border-radius: 4px;
   background: color-mix(in srgb, var(--mark-accent) 90%, white 10%);
-  color: #fff;
+  color: #fbf8f2;
   flex-shrink: 0;
 }
 .shiplog-mark-icon svg {
@@ -1584,7 +1558,7 @@ body::before {
 /* Dimmed coming-soon windows — blueprint paper body + hazard-tape titlebar */
 /* Titlebar + traffic lights + hazard tape stay fully bright (no outer filter) */
 .win-chrome.is-dimmed {
-  transition: transform 220ms ease;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .win-chrome.is-dimmed .soft-card {
   background: #f1ede0;

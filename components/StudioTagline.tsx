@@ -11,7 +11,7 @@ const ERASE_MS = 45;
 const HOLD_FULL_MS = 1600;
 const HOLD_EMPTY_MS = 220;
 
-type Phase = "typing-prefix" | "typing-word" | "holding" | "erasing-word";
+type Phase = "typing-prefix" | "typing-word" | "erasing-word";
 
 export function StudioTagline() {
   const [text, setText] = useState("");
@@ -38,10 +38,8 @@ export function StudioTagline() {
           TYPE_MS,
         );
       } else {
-        timer = window.setTimeout(() => setPhase("holding"), HOLD_FULL_MS);
+        timer = window.setTimeout(() => setPhase("erasing-word"), HOLD_FULL_MS);
       }
-    } else if (phase === "holding") {
-      setPhase("erasing-word");
     } else if (phase === "erasing-word") {
       if (text.length > PREFIX.length) {
         timer = window.setTimeout(
