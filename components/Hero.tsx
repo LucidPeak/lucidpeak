@@ -9,7 +9,7 @@ export function Hero() {
         lucidpeak
       </div>
       <p className="max-w-md text-sm text-zinc-500">
-        A small studio. Pick an app below.
+        Pick an app below.
       </p>
     </header>
   );

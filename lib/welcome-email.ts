@@ -4,7 +4,7 @@ export const WELCOME_BODY = `hey —
 
 thanks for subscribing.
 
-lucidpeak is a studio that ships small, considered apps.
+we launch our own small, considered apps.
 when there's something new (a launch, a build log, a tool
 that might be useful), i'll send a short note here.
 

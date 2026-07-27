@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apps } from "@/content/apps";
 
-const PREFIX = "we ship for ";
-const WORDS = ["designers", "devs", "creatives", "founders", "tinkerers"];
+const PREFIX = "we make ";
+const WORDS = apps.filter((a) => a.slug !== "terminal").map((a) => a.name);
 
 const TYPE_MS = 80;
 const ERASE_MS = 45;

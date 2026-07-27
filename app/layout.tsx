@@ -18,12 +18,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "lucidpeak",
-  description: "Portfolio of lucidpeak. Focused tools for curious people.",
+  description:
+    "lucidpeak makes its own apps. Small, focused products for curious people.",
   metadataBase: new URL("https://lucidpeak.co"),
   openGraph: {
     title: "lucidpeak",
     description:
-      "A small studio building software for curious people.",
+      "We make and ship our own small apps.",
     url: "https://lucidpeak.co",
     siteName: "lucidpeak",
     type: "website",
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "lucidpeak",
-    description: "A small studio building software for curious people.",
+    description: "We make and ship our own small apps.",
   },
 };
 
