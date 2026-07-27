@@ -87,6 +87,9 @@ export async function POST(request: Request) {
   if (typeof payload?.note !== "string" || payload.note.trim() === "") {
     return Response.json({ error: "note required" }, { status: 400 });
   }
+  if (payload.note.length > 5000) {
+    return Response.json({ error: "note too long" }, { status: 400 });
+  }
 
   const dir = commentsDir();
   await mkdir(dir, { recursive: true });
@@ -98,7 +101,12 @@ export async function POST(request: Request) {
     timestamp: ts.toISOString(),
     ...payload,
   };
-  await writeFile(file, JSON.stringify(body, null, 2), "utf8");
+  const json = JSON.stringify(body, null, 2);
+  // ponytail: crude size cap so a giant strokes array can't fill the disk.
+  if (json.length > 200_000) {
+    return Response.json({ error: "payload too large" }, { status: 413 });
+  }
+  await writeFile(file, json, "utf8");
 
   return Response.json({ ok: true, file: path.relative(process.cwd(), file) });
 }

@@ -242,6 +242,14 @@ export function Portfolio() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      // Don't hijack cursor movement while typing (terminal email input).
+      const t = e.target;
+      if (
+        t instanceof HTMLInputElement ||
+        t instanceof HTMLTextAreaElement ||
+        (t instanceof HTMLElement && t.isContentEditable)
+      )
+        return;
       const active = windows.filter((w) => w.open && !w.minimized);
       if (active.length === 0) return;
       const idx = active.findIndex((w) => w.slug === focusedSlug);

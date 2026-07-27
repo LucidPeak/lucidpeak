@@ -129,7 +129,6 @@ export function Terminal() {
       setAnnounceTick((n) => n + 1);
       setEmail("");
       setStatus("idle");
-      window.dispatchEvent(new CustomEvent("lp:terminal-success"));
     } catch {
       appendErrorHistory(ERR_NETWORK_VISUAL, ERR_NETWORK_SR, value);
     }

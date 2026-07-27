@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CommentOverlay } from "@/components/CommentOverlay";
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport = {
-  colorScheme: "light" as const,
+export const viewport: Viewport = {
+  colorScheme: "only light",
   themeColor: "#eceae4",
 };
 
@@ -54,7 +54,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <meta name="color-scheme" content="only light" />
         {/* Kill Chrome/Safari's lavender/yellow autofill bar on the terminal
             input. Inline because LightningCSS strips :-webkit-autofill rules
             from Tailwind v4's compiled output. */}

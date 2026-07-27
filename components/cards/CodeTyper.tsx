@@ -10,14 +10,10 @@ export type Line = Token[];
 type Props = {
   lines: Line[];
   speed?: number;
-  /** @deprecated kept for API compat; no longer used (endless scroll) */
-  pauseEnd?: number;
   animated?: boolean;
   /** How many lines to keep mounted before the oldest scrolls off */
   windowSize?: number;
 };
-
-const KIND_ORDER: TokenKind[] = ["kw", "str", "com", "fn", "num", "op", "txt"];
 
 export function CodeTyper({
   lines,
@@ -138,9 +134,6 @@ export function CodeTyper({
     logicalLine += 1;
     if (isCurrentLine) break;
   }
-
-  // Reference KIND_ORDER so tree-shakers don't drop the kind typing.
-  void KIND_ORDER;
 
   return (
     <div className="card-visual code-typer" aria-hidden>

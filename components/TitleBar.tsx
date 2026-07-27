@@ -9,7 +9,6 @@ type Props = {
   onMinimize: () => void;
   onMaximize: () => void;
   onDoubleClick?: () => void;
-  isLive?: boolean;
   locked?: boolean;
 };
 
@@ -20,7 +19,6 @@ export function TitleBar({
   onMinimize,
   onMaximize,
   onDoubleClick,
-  isLive = false,
   locked = false,
 }: Props) {
   return (
@@ -45,13 +43,6 @@ export function TitleBar({
       <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[12px] font-medium text-zinc-500">
         {title}
       </span>
-      {isLive && (
-        <span
-          aria-label="Live"
-          title="Live"
-          className="live-dot live-indicator-pulse ml-auto inline-block h-[7px] w-[7px] rounded-full bg-emerald-500"
-        />
-      )}
     </div>
   );
 }

@@ -3,7 +3,10 @@
 import type { App } from "@/content/apps";
 import { TitleBar } from "./TitleBar";
 import { WindowBody } from "./WindowBody";
+import { startStickyDrag } from "@/hooks/useStickyDrag";
 import { useRef } from "react";
+
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 type Props = {
   app: App;
@@ -50,10 +53,17 @@ export function Window({
 }: Props) {
   const dragState = useRef<{ dx: number; dy: number } | null>(null);
   const winRef = useRef<HTMLDivElement | null>(null);
-  const isLive = !app.comingSoon && !!app.href;
 
   const handleTitlePointerDown = (e: React.PointerEvent) => {
     if (stacked) return;
+    if (sticky) {
+      const el = winRef.current;
+      if (!el) return;
+      e.preventDefault();
+      startStickyDrag(el, e);
+      return;
+    }
+    if (maximized) return;
     // Pointer events report clientX/Y in viewport pixels while style.left/top
     // and transform translates are interpreted in CSS pixels. Under `body { zoom }`
     // those two spaces diverge by the zoom factor — divide to stay consistent.
@@ -61,43 +71,6 @@ export function Window({
       const z = parseFloat(getComputedStyle(document.body).zoom);
       return Number.isFinite(z) && z > 0 ? z : 1;
     })();
-    if (sticky) {
-      const el = winRef.current;
-      if (!el) return;
-      e.preventDefault();
-      const pointerId = e.pointerId;
-      const startX = e.clientX;
-      const startY = e.clientY;
-      el.style.transition = "none";
-      el.style.transform = "translate(0px, 0px)";
-      const clamp = (v: number) => Math.max(-60, Math.min(60, v * 0.25));
-      const onMoveStick = (ev: PointerEvent) => {
-        if (ev.pointerId !== pointerId) return;
-        const dx = (ev.clientX - startX) / bodyZoom;
-        const dy = (ev.clientY - startY) / bodyZoom;
-        el.style.transform = `translate(${clamp(dx)}px, ${clamp(dy)}px)`;
-      };
-      const onUpStick = (ev: PointerEvent) => {
-        if (ev.pointerId !== pointerId) return;
-        window.removeEventListener("pointermove", onMoveStick);
-        window.removeEventListener("pointerup", onUpStick);
-        window.removeEventListener("pointercancel", onUpStick);
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          el.style.transition = "";
-          el.style.transform = "";
-          return;
-        }
-        el.style.transition = "transform 320ms cubic-bezier(0.22, 1, 0.36, 1)";
-        requestAnimationFrame(() => {
-          el.style.transform = "translate(0px, 0px)";
-        });
-      };
-      window.addEventListener("pointermove", onMoveStick);
-      window.addEventListener("pointerup", onUpStick);
-      window.addEventListener("pointercancel", onUpStick);
-      return;
-    }
-    if (maximized) return;
     onFocus();
     const target = e.currentTarget as HTMLDivElement;
     target.setPointerCapture(e.pointerId);
@@ -138,7 +111,7 @@ export function Window({
         ? {
             opacity: minimized ? 0 : 1,
             pointerEvents: minimized ? "none" : "auto",
-            transition: "opacity 220ms ease",
+            transition: `opacity 220ms ${EASE}`,
           }
         : {}
       : maximized
@@ -148,7 +121,7 @@ export function Window({
             width: "100%",
             height: "100%",
             zIndex: z,
-            transition: "all 220ms cubic-bezier(0.22,1,0.36,1)",
+            transition: `all 220ms ${EASE}`,
           }
         : {
             left: x,
@@ -161,8 +134,7 @@ export function Window({
               : "translateY(0) scale(1)",
             opacity: minimized ? 0 : 1,
             pointerEvents: minimized ? "none" : "auto",
-            transition:
-              "transform 260ms cubic-bezier(0.22,1,0.36,1), opacity 220ms ease",
+            transition: `transform 260ms ${EASE}, opacity 220ms ${EASE}`,
           };
 
   const posClass = stacked || sticky ? "" : "absolute";
@@ -186,7 +158,6 @@ export function Window({
           onClose={onClose}
           onMinimize={onMinimize}
           onMaximize={onMaximizeToggle}
-          isLive={isLive}
           locked={locked}
         />
         <div className="flex-1 overflow-auto">
