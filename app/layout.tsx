@@ -17,9 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "lucidpeak — a small studio building software for curious people",
-  description:
-    "Portfolio of lucidpeak. Focused tools for curious people, shipped one at a time.",
+  title: "lucidpeak",
+  description: "Portfolio of lucidpeak. Focused tools for curious people.",
   metadataBase: new URL("https://lucidpeak.co"),
   openGraph: {
     title: "lucidpeak",
