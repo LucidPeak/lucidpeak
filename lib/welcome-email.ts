@@ -1,6 +1,6 @@
 export const WELCOME_SUBJECT = "welcome to lucidpeak";
 
-export const WELCOME_BODY = `hey —
+export const WELCOME_BODY = `hey,
 
 thanks for subscribing.
 
@@ -10,7 +10,7 @@ that might be useful), i'll send a short note here.
 
 no hype, no pestering. reply if you want to chat.
 
-— nikita
+- nikita
 lucidpeak.co
 `;
 

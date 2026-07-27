@@ -61,7 +61,7 @@ export const apps: App[] = [
   },
   {
     slug: "terminal",
-    name: "Terminal – Signup",
+    name: "Terminal - Signup",
     comingSoon: false,
     accent: "#1c1b19",
     mark: "›",
