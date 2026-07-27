@@ -14,10 +14,27 @@ type Body = {
   website?: unknown;
 };
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function isValidEmail(value: string) {
-  if (value.length === 0 || value.length > 254) return false;
-  if (!value.includes("@")) return false;
-  return true;
+  return value.length <= 254 && EMAIL_RE.test(value);
+}
+
+// ponytail: in-memory per-instance rate limit. Good enough while traffic is
+// tiny; swap for a durable store (Upstash/edge config) if abuse shows up.
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const hits = new Map<string, { count: number; reset: number }>();
+
+function rateLimited(key: string, limit: number): boolean {
+  const now = Date.now();
+  const h = hits.get(key);
+  if (!h || now > h.reset) {
+    if (hits.size > 5000) hits.clear();
+    hits.set(key, { count: 1, reset: now + RATE_WINDOW_MS });
+    return false;
+  }
+  h.count += 1;
+  return h.count > limit;
 }
 
 export async function POST(req: Request) {
@@ -41,6 +58,19 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { ok: false, error: "invalid_email" },
       { status: 400 },
+    );
+  }
+
+  const ip = (req.headers.get("x-forwarded-for") ?? "unknown")
+    .split(",")[0]
+    .trim();
+  if (
+    rateLimited(`ip:${ip}`, 5) ||
+    rateLimited(`email:${email.toLowerCase()}`, 2)
+  ) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429 },
     );
   }
 

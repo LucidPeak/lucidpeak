@@ -3,8 +3,7 @@
 import type { App } from "@/content/apps";
 import type { WindowState } from "./Portfolio";
 import { AppMark } from "./AppMark";
-import { TerminalMark } from "./TerminalMark";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = {
   apps: App[];
@@ -17,38 +16,8 @@ const MAX_SCALE = 1.2;
 const RANGE = 90;
 
 export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
-  const refs = useRef<Record<string, HTMLButtonElement | null>>({});
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const ulRef = useRef<HTMLUListElement | null>(null);
-  const [breath, setBreath] = useState(0);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      const el = document.activeElement;
-      if (!el || !(el instanceof HTMLButtonElement)) return;
-      const slug = Object.entries(refs.current).find(
-        ([, ref]) => ref === el,
-      )?.[0];
-      if (slug) {
-        e.preventDefault();
-        onDockClick(slug);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onDockClick]);
-
-  useEffect(() => {
-    const handler = () => {
-      const term = windows.find((w) => w.slug === "terminal");
-      if (term && (term.minimized || !term.open)) {
-        setBreath((n) => n + 1);
-      }
-    };
-    window.addEventListener("lp:terminal-success", handler);
-    return () => window.removeEventListener("lp:terminal-success", handler);
-  }, [windows]);
 
   useEffect(() => {
     const ul = ulRef.current;
@@ -150,31 +119,17 @@ export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
               className={`dock-item relative ${app.comingSoon ? "saturate-[0.8] opacity-85" : ""}`}
             >
               <button
-                ref={(el) => {
-                  refs.current[app.slug] = el;
-                }}
                 role="tab"
                 aria-selected={focused}
                 aria-label={`${app.name}${app.comingSoon ? " (coming soon)" : ""}`}
                 onClick={() => onDockClick(app.slug)}
-                className={`group relative flex items-center justify-center rounded-[12px] active:scale-95 ${
-                  app.slug === "terminal" && breath > 0 ? "dock-breath" : ""
-                }`}
-                key={app.slug === "terminal" ? `btn-${breath}` : app.slug}
+                className="group relative flex items-center justify-center rounded-[12px] active:scale-95"
               >
-                {app.slug === "terminal" ? (
-                  <TerminalMark
-                    size={32}
-                    accent={app.accent}
-                    className="transition-[filter] duration-200 group-hover:brightness-105"
-                  />
-                ) : (
-                  <AppMark
-                    app={app}
-                    size={32}
-                    className="transition-[filter] duration-200 group-hover:brightness-105"
-                  />
-                )}
+                <AppMark
+                  app={app}
+                  size={32}
+                  className="transition-[filter] duration-200 group-hover:brightness-105"
+                />
                 <span
                   aria-hidden
                   className={`absolute -bottom-2 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full transition-all duration-200 ${
