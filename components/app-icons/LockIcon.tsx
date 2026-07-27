@@ -1,36 +1,37 @@
 type Props = { size: number };
 
 export function LockIcon({ size }: Props) {
-  const stroke = "rgba(0,0,0,0.88)";
+  const stroke = "#d8d3c8";
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
       aria-hidden
     >
+      <rect width="32" height="32" rx="7" fill="#1c1b19" />
       <rect
-        x="4.5"
-        y="10.5"
-        width="15"
+        x="9"
+        y="14.5"
+        width="14"
         height="10"
         rx="2.2"
         stroke={stroke}
-        strokeWidth="1.7"
+        strokeWidth="2"
       />
       <path
-        d="M8 10.5V7.5a4 4 0 0 1 8 0v3"
+        d="M12 14.5v-3a4 4 0 0 1 8 0v3"
         stroke={stroke}
-        strokeWidth="1.7"
+        strokeWidth="2"
         strokeLinecap="round"
         fill="none"
       />
-      <circle cx="12" cy="14.8" r="1.4" fill={stroke} />
+      <circle cx="16" cy="19" r="1.4" fill={stroke} />
       <path
-        d="M12 15.8v2"
+        d="M16 20v2"
         stroke={stroke}
-        strokeWidth="1.7"
+        strokeWidth="2"
         strokeLinecap="round"
       />
     </svg>
