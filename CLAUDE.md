@@ -25,11 +25,11 @@ Ask user before starting dev server — they usually have one running.
 - `app/layout.tsx` — fonts (Geist Sans/Mono), metadata, injects `<CommentOverlay />` **only in dev**
 - `app/api/comments/route.ts` — dev-only comment capture endpoint (writes to `.comments/`)
 - `app/globals.css` — palette, mac-window classes (`.mac-screen`, `.mac-display`, `.mac-desktop`, `.win-chrome`, `.terminal-outside`), Tailwind v4 directives
-- `components/` — `Portfolio`, `Window`, `WindowBody`, `TitleBar`, `TrafficLights`, `Dock`, `Hero`, `Terminal`, `Signup`, `CommentOverlay`
-- `components/cards/` — per-app preview cards (`LettermatchCard`, `IssueAggregatorCard`, `HiRelayCard`, `BuildMeThisCard`, `CodeTyper`, `LettermatchLivePreview`)
-- `components/app-icons/` — per-app svg icons
-- `content/apps.ts` — single source of truth for the app roster (slug, accent, href, icon)
-- `hooks/useStickyDrag.ts` — window drag hook
+- `components/` - `Portfolio`, `Window`, `WindowBody`, `TitleBar`, `TrafficLights`, `Dock`, `Terminal`, `CommentOverlay`
+- `components/cards/` - per-app preview cards (`LettermatchCard`, `IssueAggregatorCard`, `LettermatchLivePreview`, `IssueAggregatorLivePreview`, `SecretCard`, `CodeTyper`)
+- `components/app-icons/` - per-app svg icons
+- `content/apps.ts` - single source of truth for the app roster (slug, accent, href, icon)
+- `hooks/` - `useStickyDrag` (rubber-band window wobble; also exports imperative `startStickyDrag`), `useInViewport`
 
 ## Design rules (mandatory)
 
@@ -50,7 +50,7 @@ Ask user before starting dev server — they usually have one running.
 
 ## Workflow context
 
-- `.planning/` is GSD workflow state — do not edit by hand unless running a GSD skill.
+- `.planning/sketches/` holds committed design sketches. (GSD tooling is retired - don't run `gsd-*` commands.)
 - `.comments/` holds dev CommentOverlay output — user leaves review comments there for you to pick up.
 - `docs/superpowers/plans/` holds active implementation plans.
 - Before claiming a UI change works, the user usually wants visual confirmation — say so if you can't verify.
