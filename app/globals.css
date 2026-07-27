@@ -227,10 +227,7 @@ body::before {
   pointer-events: none;
 }
 
-/* Live indicator — softer pulse than Tailwind's animate-pulse */
-.live-indicator-pulse {
-  animation: live-indicator-pulse 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
+/* Soft pulse keyframes — used by the IssueAggregator preview's ia-live-dot */
 @keyframes live-indicator-pulse {
   0%, 100% {
     opacity: 1;
@@ -242,9 +239,6 @@ body::before {
     transform: scale(1.12);
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0);
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .live-indicator-pulse { animation: none; }
 }
 .card-reveal:hover .card-art-layer {
   opacity: 0.45;

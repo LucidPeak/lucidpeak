@@ -51,17 +51,11 @@ export function WindowBody({ app }: Props) {
           <span
             className={
               app.comingSoon
-                ? "inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-zinc-600"
-                : "inline-flex items-center gap-1.5 rounded-full border border-emerald-600/15 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700"
+                ? "inline-flex items-center rounded-full border border-black/10 bg-white/70 px-2 py-0.5 text-[10px] font-medium text-zinc-600"
+                : "inline-flex items-center rounded-full border border-emerald-600/15 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700"
             }
           >
             {badge}
-            <span
-              aria-hidden
-              className={`inline-block h-1.5 w-1.5 rounded-full ${
-                app.comingSoon ? "bg-zinc-400" : "bg-emerald-500 live-indicator-pulse"
-              }`}
-            />
           </span>
         </div>
 

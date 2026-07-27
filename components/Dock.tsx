@@ -105,7 +105,7 @@ export function Dock({ apps, windows, focusedSlug, onDockClick }: Props) {
       <ul
         ref={ulRef}
         role="tablist"
-        className="dock-list soft-dock flex items-end gap-2.5 rounded-[16px] px-2 py-1.5 sm:gap-3"
+        className="dock-list soft-dock flex items-end gap-2.5 rounded-[16px] px-2 pt-1.5 pb-3 sm:gap-3"
       >
         {apps.map((app, idx) => {
           const w = windows.find((x) => x.slug === app.slug);
