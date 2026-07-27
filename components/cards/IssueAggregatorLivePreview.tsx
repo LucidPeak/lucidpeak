@@ -131,10 +131,6 @@ export function IssueAggregatorLivePreview() {
           </svg>
         </span>
         <span className="ia-brand-name">IssueAggregator</span>
-        <span className="ia-live-pill" aria-hidden>
-          <span className="ia-live-dot" />
-          live
-        </span>
       </div>
 
       <div className="ia-feed">
